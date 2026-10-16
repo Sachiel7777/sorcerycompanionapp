@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 
 import '../data/card_repository.dart';
 import '../data/settings.dart';
+import '../l10n/strings.dart';
+import '../theme.dart';
 import 'offline_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -13,90 +15,131 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = context.s;
     final text = Theme.of(context).textTheme;
-    Widget header(String title) => Padding(
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-      child: Text(title, style: text.titleSmall?.copyWith(color: Theme.of(context).colorScheme.primary)),
+    Widget group(List<Widget> children) => Card(
+      margin: const EdgeInsets.symmetric(horizontal: 12),
+      clipBehavior: Clip.antiAlias,
+      child: Column(children: children),
     );
+    Widget padded(Widget child) =>
+        Padding(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12), child: child);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Impostazioni')),
+      appBar: AppBar(title: Text(s.settingsTitle)),
       body: ListenableBuilder(
         listenable: settings,
         builder: (context, _) => ListView(
+          padding: const EdgeInsets.only(bottom: 24),
           children: [
-            header('Aspetto'),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: SegmentedButton<ThemeMode>(
-                segments: const [
-                  ButtonSegment(value: ThemeMode.system, label: Text('Auto')),
-                  ButtonSegment(value: ThemeMode.light, label: Text('Chiaro')),
-                  ButtonSegment(value: ThemeMode.dark, label: Text('Scuro')),
-                ],
-                selected: {settings.themeMode},
-                onSelectionChanged: (s) => settings.themeMode = s.first,
-              ),
-            ),
-            header('Partita'),
-            ListTile(
-              title: const Text('Vita iniziale'),
-              subtitle: const Text('Vale dalla prossima partita'),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.remove),
-                    tooltip: 'Meno vita',
-                    onPressed: settings.startingLife > 1 ? () => settings.startingLife -= 1 : null,
+            SectionTitle(s.language, padding: const EdgeInsets.fromLTRB(16, 8, 16, 8)),
+            group([
+              padded(
+                SizedBox(
+                  width: double.infinity,
+                  child: SegmentedButton<String>(
+                    segments: [
+                      ButtonSegment(value: 'auto', label: Text(s.languageAuto)),
+                      const ButtonSegment(value: 'it', label: Text('Italiano')),
+                      const ButtonSegment(value: 'en', label: Text('English')),
+                    ],
+                    selected: {settings.locale?.languageCode ?? 'auto'},
+                    onSelectionChanged: (v) => settings.locale = v.first == 'auto' ? null : Locale(v.first),
                   ),
-                  Text('${settings.startingLife}', style: text.titleMedium),
-                  IconButton(
-                    icon: const Icon(Icons.add),
-                    tooltip: 'Più vita',
-                    onPressed: () => settings.startingLife += 1,
+                ),
+              ),
+            ]),
+            SectionTitle(s.appearance),
+            group([
+              padded(
+                SizedBox(
+                  width: double.infinity,
+                  child: SegmentedButton<ThemeMode>(
+                    segments: [
+                      ButtonSegment(
+                        value: ThemeMode.system,
+                        icon: const Icon(Icons.brightness_auto_outlined),
+                        label: Text(s.themeAuto),
+                      ),
+                      ButtonSegment(
+                        value: ThemeMode.light,
+                        icon: const Icon(Icons.light_mode_outlined),
+                        label: Text(s.themeLight),
+                      ),
+                      ButtonSegment(
+                        value: ThemeMode.dark,
+                        icon: const Icon(Icons.dark_mode_outlined),
+                        label: Text(s.themeDark),
+                      ),
+                    ],
+                    selected: {settings.themeMode},
+                    onSelectionChanged: (v) => settings.themeMode = v.first,
                   ),
-                ],
+                ),
               ),
-            ),
-            if (!kIsWeb)
-              SwitchListTile(
-                title: const Text('Schermo sempre acceso'),
-                subtitle: const Text('Durante la partita lo schermo non si spegne'),
-                value: settings.keepScreenOn,
-                onChanged: (v) => settings.keepScreenOn = v,
-              ),
-            if (!kIsWeb) ...[
-              header('Immagini'),
+            ]),
+            SectionTitle(s.game),
+            group([
               ListTile(
-                leading: const Icon(Icons.download_for_offline_outlined),
-                title: const Text('Uso offline'),
-                subtitle: const Text('Scarica tutte le immagini delle carte'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => OfflineScreen(db: db))),
+                leading: const Icon(Icons.favorite_outline),
+                title: Text(s.startingLife),
+                subtitle: Text(s.startingLifeHint),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.remove),
+                      tooltip: s.lessLife,
+                      onPressed: settings.startingLife > 1 ? () => settings.startingLife -= 1 : null,
+                    ),
+                    SizedBox(
+                      width: 32,
+                      child: Text('${settings.startingLife}', textAlign: TextAlign.center, style: text.titleMedium),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.add),
+                      tooltip: s.moreLife,
+                      onPressed: () => settings.startingLife += 1,
+                    ),
+                  ],
+                ),
               ),
+              if (!kIsWeb)
+                SwitchListTile(
+                  secondary: const Icon(Icons.light_mode_outlined),
+                  title: Text(s.keepScreenOn),
+                  subtitle: Text(s.keepScreenOnHint),
+                  value: settings.keepScreenOn,
+                  onChanged: (v) => settings.keepScreenOn = v,
+                ),
+            ]),
+            if (!kIsWeb) ...[
+              SectionTitle(s.images),
+              group([
+                ListTile(
+                  leading: const Icon(Icons.download_for_offline_outlined),
+                  title: Text(s.offline),
+                  subtitle: Text(s.offlineHint),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => OfflineScreen(db: db))),
+                ),
+              ]),
             ],
-            header('Informazioni'),
-            ListTile(
-              leading: const Icon(Icons.info_outline),
-              title: const Text('Archivio carte'),
-              subtitle: Text('${db.cards.length} carte in ${db.setInfo.length} set'),
-            ),
-            const ListTile(
-              leading: Icon(Icons.copyright),
-              title: Text('Crediti'),
-              subtitle: Text(
-                'Nomi, testi e immagini delle carte sono © Erik\'s Curiosa. '
-                'Dati e immagini da Kairos Archive (kairosarchive.net). '
-                'App non ufficiale, ispirata a sorcery-companion.com.',
+            SectionTitle(s.about),
+            group([
+              ListTile(
+                leading: const Icon(Icons.info_outline),
+                title: Text(s.cardArchive),
+                subtitle: Text(s.archiveSummary(db.cards.length, db.setInfo.length)),
               ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.description_outlined),
-              title: const Text('Licenze del software'),
-              onTap: () => showLicensePage(context: context, applicationName: 'Sorcery Companion'),
-            ),
-            const SizedBox(height: 24),
+              ListTile(leading: const Icon(Icons.copyright), title: Text(s.credits), subtitle: Text(s.creditsText)),
+              ListTile(
+                leading: const Icon(Icons.description_outlined),
+                title: Text(s.licenses),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => showLicensePage(context: context, applicationName: 'Sorcery Companion'),
+              ),
+            ]),
           ],
         ),
       ),

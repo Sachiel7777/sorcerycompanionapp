@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data/card_repository.dart';
 import '../data/image_cache.dart';
+import '../l10n/strings.dart';
 
 class OfflineScreen extends StatefulWidget {
   const OfflineScreen({super.key, required this.db});
@@ -32,15 +33,13 @@ class _OfflineScreenState extends State<OfflineScreen> {
     if (!mounted) return;
     setState(() {
       _download = null;
-      _message = failed == 0
-          ? 'Fatto: tutte le immagini sono sul dispositivo.'
-          : 'Completato, ma $failed immagini non sono state scaricate. Riprova più tardi.';
+      _message = failed == 0 ? context.s.offlineDone : context.s.offlineFailed(failed);
     });
   }
 
   Future<void> _clear() async {
     await cardImageCache.emptyCache();
-    if (mounted) setState(() => _message = 'Immagini cancellate dal dispositivo.');
+    if (mounted) setState(() => _message = context.s.offlineCleared);
   }
 
   @override
@@ -53,41 +52,31 @@ class _OfflineScreenState extends State<OfflineScreen> {
   Widget build(BuildContext context) {
     final running = _download != null;
     final text = Theme.of(context).textTheme;
+    final s = context.s;
     return Scaffold(
-      appBar: AppBar(title: const Text('Uso offline')),
+      appBar: AppBar(title: Text(s.offline)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text(
-            'L\'elenco delle carte è già nell\'app. Scarica anche le immagini per '
-            'sfogliarle senza connessione (circa 2200 file, conviene usare il Wi-Fi).',
-            style: text.bodyLarge,
-          ),
+          Text(s.offlineIntro, style: text.bodyLarge),
           const SizedBox(height: 24),
           if (running) ...[
             LinearProgressIndicator(value: _total == 0 ? null : _done / _total),
             const SizedBox(height: 8),
-            Text('$_done di $_total immagini'),
+            Text(s.offlineProgress(_done, _total)),
             const SizedBox(height: 16),
             OutlinedButton(
               onPressed: () {
                 _download?.cancel();
               },
-              child: const Text('Interrompi'),
+              child: Text(s.stop),
             ),
           ] else ...[
-            FilledButton.icon(
-              icon: const Icon(Icons.download),
-              label: const Text('Scarica tutte le immagini'),
-              onPressed: _start,
-            ),
+            FilledButton.icon(icon: const Icon(Icons.download), label: Text(s.downloadAll), onPressed: _start),
             const SizedBox(height: 8),
-            TextButton(onPressed: _clear, child: const Text('Cancella immagini scaricate')),
+            TextButton(onPressed: _clear, child: Text(s.clearImages)),
           ],
-          if (_message != null) ...[
-            const SizedBox(height: 16),
-            Text(_message!, style: text.bodyMedium),
-          ],
+          if (_message != null) ...[const SizedBox(height: 16), Text(_message!, style: text.bodyMedium)],
         ],
       ),
     );

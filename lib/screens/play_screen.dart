@@ -1,30 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
+import '../data/card_repository.dart';
 import '../data/settings.dart';
-
-class _Element {
-  const _Element(this.key, this.label, this.icon, this.color);
-
-  final String key;
-  final String label;
-  final IconData icon;
-  final Color color;
-}
-
-const _elements = [
-  _Element('air', 'Aria', Icons.air, Color(0xFF8FA7C4)),
-  _Element('earth', 'Terra', Icons.landscape, Color(0xFF9A8A5A)),
-  _Element('fire', 'Fuoco', Icons.local_fire_department, Color(0xFFD9653B)),
-  _Element('water', 'Acqua', Icons.water_drop, Color(0xFF3F86C6)),
-];
+import '../l10n/strings.dart';
+import '../theme.dart';
 
 class _Player {
   _Player(this.life);
 
   int life;
   int mana = 0;
-  final Map<String, int> threshold = {for (final e in _elements) e.key: 0};
+  final Map<String, int> threshold = {for (final e in CardDatabase.elements) e: 0};
 }
 
 /// Life, mana and threshold of two players during a game at the table.
@@ -71,14 +58,15 @@ class _PlayScreenState extends State<PlayScreen> {
   }
 
   Future<void> _reset() async {
+    final s = context.s;
     final ok = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Nuova partita?'),
-        content: Text('Vita a ${widget.settings.startingLife}, mana e soglie a zero per entrambi.'),
+        title: Text(s.newGameQuestion),
+        content: Text(s.newGameText(widget.settings.startingLife)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Annulla')),
-          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Ricomincia')),
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(s.cancel)),
+          FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(s.restart)),
         ],
       ),
     );
@@ -87,6 +75,8 @@ class _PlayScreenState extends State<PlayScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final s = context.s;
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       body: SafeArea(
         child: LayoutBuilder(
@@ -94,29 +84,24 @@ class _PlayScreenState extends State<PlayScreen> {
             final sideBySide = box.maxWidth > box.maxHeight;
             final me = _PlayerPanel(
               key: const ValueKey('p1'),
-              name: 'Giocatore 1',
+              name: s.player(1),
+              accent: scheme.primary,
               player: _players[0],
               onChanged: () => setState(() {}),
             );
             final opponent = _PlayerPanel(
               key: const ValueKey('p2'),
-              name: 'Giocatore 2',
+              name: s.player(2),
+              accent: elementColors['Water']!,
               player: _players[1],
               onChanged: () => setState(() {}),
             );
-            final reset = IconButton.filledTonal(
-              icon: const Icon(Icons.restart_alt),
-              tooltip: 'Nuova partita',
-              onPressed: _reset,
-            );
+            final reset = IconButton.filled(icon: const Icon(Icons.restart_alt), tooltip: s.newGame, onPressed: _reset);
             if (sideBySide) {
               return Row(
                 children: [
                   Expanded(child: opponent),
-                  Padding(
-                    padding: const EdgeInsets.all(4),
-                    child: Center(child: reset),
-                  ),
+                  Center(child: reset),
                   Expanded(child: me),
                 ],
               );
@@ -124,7 +109,7 @@ class _PlayScreenState extends State<PlayScreen> {
             return Column(
               children: [
                 Expanded(child: RotatedBox(quarterTurns: 2, child: opponent)),
-                Padding(padding: const EdgeInsets.all(4), child: reset),
+                reset,
                 Expanded(child: me),
               ],
             );
@@ -136,9 +121,16 @@ class _PlayScreenState extends State<PlayScreen> {
 }
 
 class _PlayerPanel extends StatelessWidget {
-  const _PlayerPanel({super.key, required this.name, required this.player, required this.onChanged});
+  const _PlayerPanel({
+    super.key,
+    required this.name,
+    required this.accent,
+    required this.player,
+    required this.onChanged,
+  });
 
   final String name;
+  final Color accent;
   final _Player player;
   final VoidCallback onChanged;
 
@@ -149,73 +141,86 @@ class _PlayerPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = context.s;
     final scheme = Theme.of(context).colorScheme;
     final text = Theme.of(context).textTheme;
     final deathsDoor = player.life == 0;
-    return Card(
+    final tint = deathsDoor ? scheme.error : accent;
+    return Container(
       margin: const EdgeInsets.all(8),
-      color: deathsDoor ? scheme.errorContainer : scheme.surfaceContainerHigh,
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          children: [
-            Text(name, style: text.titleSmall),
-            Expanded(
-              child: Row(
-                children: [
-                  _BigButton(
-                    icon: Icons.remove,
-                    label: 'Togli vita',
-                    onTap: () => _change(() => player.life = (player.life - 1).clamp(0, 999)),
-                    onLongPress: () => _change(() => player.life = (player.life - 5).clamp(0, 999)),
-                  ),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        FittedBox(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: tint.withValues(alpha: 0.5), width: 1.5),
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [tint.withValues(alpha: 0.22), scheme.surfaceContainerLow],
+        ),
+      ),
+      padding: const EdgeInsets.all(8),
+      child: Column(
+        children: [
+          Text(name.toUpperCase(), style: text.labelLarge?.copyWith(letterSpacing: 1.5, color: tint)),
+          Expanded(
+            child: Row(
+              children: [
+                _BigButton(
+                  icon: Icons.remove,
+                  label: s.loseLife,
+                  onTap: () => _change(() => player.life = (player.life - 1).clamp(0, 999)),
+                  onLongPress: () => _change(() => player.life = (player.life - 5).clamp(0, 999)),
+                ),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        child: FittedBox(
                           child: Text(
                             '${player.life}',
-                            style: text.displayLarge?.copyWith(fontWeight: FontWeight.bold, fontSize: 88),
+                            style: text.displayLarge?.copyWith(fontSize: 96, height: 1, color: scheme.onSurface),
                           ),
                         ),
-                        Text(deathsDoor ? "Death's Door" : 'Vita', style: text.labelLarge),
-                      ],
-                    ),
+                      ),
+                      Text(
+                        deathsDoor ? s.deathsDoor : s.life,
+                        style: text.labelLarge?.copyWith(color: deathsDoor ? scheme.error : scheme.onSurfaceVariant),
+                      ),
+                    ],
                   ),
-                  _BigButton(
-                    icon: Icons.add,
-                    label: 'Aggiungi vita',
-                    onTap: () => _change(() => player.life++),
-                    onLongPress: () => _change(() => player.life += 5),
-                  ),
-                ],
-              ),
-            ),
-            Wrap(
-              alignment: WrapAlignment.center,
-              spacing: 4,
-              runSpacing: 4,
-              children: [
-                _Counter(
-                  icon: Icons.auto_awesome,
-                  label: 'Mana',
-                  color: scheme.primary,
-                  value: player.mana,
-                  onChanged: (v) => _change(() => player.mana = v),
                 ),
-                for (final e in _elements)
-                  _Counter(
-                    icon: e.icon,
-                    label: 'Soglia ${e.label}',
-                    color: e.color,
-                    value: player.threshold[e.key]!,
-                    onChanged: (v) => _change(() => player.threshold[e.key] = v),
-                  ),
+                _BigButton(
+                  icon: Icons.add,
+                  label: s.gainLife,
+                  onTap: () => _change(() => player.life++),
+                  onLongPress: () => _change(() => player.life += 5),
+                ),
               ],
             ),
-          ],
-        ),
+          ),
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 6,
+            runSpacing: 6,
+            children: [
+              _Counter(
+                icon: Icons.auto_awesome,
+                label: s.mana,
+                color: scheme.primary,
+                value: player.mana,
+                onChanged: (v) => _change(() => player.mana = v),
+              ),
+              for (final e in CardDatabase.elements)
+                _Counter(
+                  icon: elementIcons[e]!,
+                  label: s.threshold(s.element(e)),
+                  color: elementColors[e]!,
+                  value: player.threshold[e]!,
+                  onChanged: (v) => _change(() => player.threshold[e] = v),
+                ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -235,10 +240,14 @@ class _BigButton extends StatelessWidget {
       button: true,
       label: label,
       child: InkWell(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(20),
         onTap: onTap,
         onLongPress: onLongPress,
-        child: SizedBox(width: 72, height: double.infinity, child: Icon(icon, size: 36)),
+        child: SizedBox(
+          width: 72,
+          height: double.infinity,
+          child: Icon(icon, size: 36, color: Theme.of(context).colorScheme.onSurfaceVariant),
+        ),
       ),
     );
   }
@@ -267,7 +276,8 @@ class _Counter extends StatelessWidget {
       message: label,
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: color.withValues(alpha: 0.6)),
+          color: color.withValues(alpha: value > 0 ? 0.22 : 0.08),
+          border: Border.all(color: color.withValues(alpha: 0.7)),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
@@ -281,7 +291,7 @@ class _Counter extends StatelessWidget {
             ),
             Icon(icon, size: 18, color: color),
             const SizedBox(width: 4),
-            Text('$value', style: text.titleMedium),
+            Text('$value', style: text.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
             IconButton(
               visualDensity: VisualDensity.compact,
               icon: const Icon(Icons.add, size: 18),
