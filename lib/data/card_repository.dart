@@ -20,10 +20,11 @@ class CardSet {
 }
 
 class CardDatabase {
-  const CardDatabase({required this.setInfo, required this.cards});
+  CardDatabase({required this.setInfo, required this.cards}) : byId = {for (final c in cards) c.id: c};
 
   final List<CardSet> setInfo;
   final List<SorceryCard> cards;
+  final Map<String, SorceryCard> byId;
 
   List<String> get sets => [for (final s in setInfo) s.name];
 
