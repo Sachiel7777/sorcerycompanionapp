@@ -1,11 +1,9 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../data/card_repository.dart';
 import '../models/sorcery_card.dart';
 import '../widgets/card_art.dart';
 import 'card_detail_screen.dart';
-import 'offline_screen.dart';
 
 const typeLabels = {
   'Avatar': 'Avatar',
@@ -21,9 +19,15 @@ const elementLabels = {'Air': 'Aria', 'Earth': 'Terra', 'Fire': 'Fuoco', 'Water'
 enum SortOrder { name, costAsc, costDesc }
 
 class CardListScreen extends StatefulWidget {
-  const CardListScreen({super.key, required this.db});
+  const CardListScreen({super.key, required this.db, this.title, this.initialSets = const {}});
 
   final CardDatabase db;
+
+  /// Shown in the app bar instead of the app name (used when opened from a set).
+  final String? title;
+
+  /// Expansions selected in the filters when the screen opens.
+  final Set<String> initialSets;
 
   @override
   State<CardListScreen> createState() => _CardListScreenState();
@@ -31,7 +35,7 @@ class CardListScreen extends StatefulWidget {
 
 class _CardListScreenState extends State<CardListScreen> {
   String _query = '';
-  final Set<String> _sets = {};
+  late final Set<String> _sets = {...widget.initialSets};
   final Set<String> _types = {};
   final Set<String> _elements = {};
   final Set<String> _rarities = {};
@@ -66,16 +70,8 @@ class _CardListScreenState extends State<CardListScreen> {
     final cards = _visible;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sorcery Companion'),
+        title: Text(widget.title ?? 'Sorcery Companion'),
         actions: [
-          if (!kIsWeb)
-            IconButton(
-              icon: const Icon(Icons.download_for_offline_outlined),
-              tooltip: 'Uso offline',
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => OfflineScreen(db: widget.db)),
-              ),
-            ),
           PopupMenuButton<SortOrder>(
             icon: const Icon(Icons.sort),
             tooltip: 'Ordina',
@@ -164,10 +160,11 @@ class _CardListScreenState extends State<CardListScreen> {
             final card = cards[i];
             return InkWell(
               borderRadius: BorderRadius.circular(8),
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => CardDetailScreen(card: card)),
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => CardDetailScreen(card: card))),
+              child: Hero(
+                tag: card.id,
+                child: CardArt(card: card),
               ),
-              child: Hero(tag: card.id, child: CardArt(card: card)),
             );
           },
         ),
@@ -187,8 +184,12 @@ class _CardListScreenState extends State<CardListScreen> {
             setSheet(() {});
           }
 
-          Widget section(String title, List<String> values, Set<String> selected,
-              [Map<String, String> labels = const {}]) {
+          Widget section(
+            String title,
+            List<String> values,
+            Set<String> selected, [
+            Map<String, String> labels = const {},
+          ]) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 16),
               child: Column(
