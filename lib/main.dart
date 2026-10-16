@@ -1,33 +1,64 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'data/card_repository.dart';
-import 'screens/card_list_screen.dart';
+import 'data/settings.dart';
+import 'l10n/strings.dart';
+import 'screens/home_screen.dart';
+import 'theme.dart';
 
-void main() => runApp(const SorceryApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  LicenseRegistry.addLicense(() async* {
+    yield LicenseEntryWithLineBreaks(['Cinzel'], await rootBundle.loadString('assets/fonts/Cinzel-OFL.txt'));
+  });
+  final settings = await AppSettings.load();
+  runApp(SorceryApp(settings: settings));
+}
 
 class SorceryApp extends StatelessWidget {
-  const SorceryApp({super.key});
+  const SorceryApp({super.key, required this.settings});
+
+  final AppSettings settings;
 
   @override
   Widget build(BuildContext context) {
-    const seed = Color(0xFF8C6A3F);
-    return MaterialApp(
-      title: 'Sorcery Companion',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(colorSchemeSeed: seed),
-      darkTheme: ThemeData(colorSchemeSeed: seed, brightness: Brightness.dark),
-      home: FutureBuilder<CardDatabase>(
-        future: CardDatabase.loadBundled(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Scaffold(body: Center(child: Text('Errore nel caricare le carte: ${snapshot.error}')));
-          }
-          if (!snapshot.hasData) {
-            return const Scaffold(body: Center(child: CircularProgressIndicator()));
-          }
-          return CardListScreen(db: snapshot.data!);
-        },
+    return ListenableBuilder(
+      listenable: settings,
+      builder: (context, _) => MaterialApp(
+        title: 'Sorcery Companion',
+        debugShowCheckedModeBanner: false,
+        theme: buildTheme(Brightness.light),
+        darkTheme: buildTheme(Brightness.dark),
+        themeMode: settings.themeMode,
+        locale: settings.locale,
+        supportedLocales: AppStrings.supportedLocales,
+        // A device in any other language gets English.
+        localeResolutionCallback: (device, supported) =>
+            supported.firstWhere((l) => l.languageCode == device?.languageCode, orElse: () => const Locale('en')),
+        localizationsDelegates: const [
+          AppStrings.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        home: FutureBuilder<CardDatabase>(
+          future: _cards,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Scaffold(body: Center(child: Text(context.s.loadError(snapshot.error!))));
+            }
+            if (!snapshot.hasData) {
+              return const Scaffold(body: Center(child: CircularProgressIndicator()));
+            }
+            return HomeScreen(db: snapshot.data!, settings: settings);
+          },
+        ),
       ),
     );
   }
 }
+
+final Future<CardDatabase> _cards = CardDatabase.loadBundled();

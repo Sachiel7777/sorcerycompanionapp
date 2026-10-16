@@ -11,7 +11,11 @@ un solo codice produce l'app per tutte le piattaforme.
 - Filtri per espansione, tipo, elemento e rarità; ordinamento per nome o costo.
 - Scheda della carta: statistiche, testo, tutte le stampe (cliccando una stampa si vede la sua immagine).
 - Le immagini già viste restano in cache sul telefono.
-- Pulsante "Uso offline" per scaricare tutte le immagini in una volta.
+- **Set**: tutte le espansioni con numero di carte e data di uscita; toccandone una si aprono le sue carte.
+- **Partita**: contatore per due giocatori (vita, mana e soglie dei quattro elementi), con la metà
+  dell'avversario capovolta e lo schermo sempre acceso.
+- **Impostazioni**: lingua (italiano o inglese, o quella del telefono), tema chiaro/scuro, vita iniziale, schermo acceso, "Uso offline" per scaricare
+  tutte le immagini in una volta, crediti.
 
 ## Da dove vengono i dati
 
@@ -22,7 +26,11 @@ un solo codice produce l'app per tutte le piattaforme.
   su `api.kairosarchive.net` (hotlink consentito, con credito a Erik's Curiosa).
 - `tool/build_cards.py` riduce l'esportazione a `assets/data/cards.json`, incluso nell'app.
 
-Nomi, testi e immagini delle carte sono © Erik's Curiosa.
+Nomi, testi e immagini delle carte sono © Erik's Curiosa. I testi delle carte restano in inglese,
+l'unica lingua in cui sono pubblicati. Il carattere dei titoli è Cinzel (SIL Open Font License,
+`assets/fonts/Cinzel-OFL.txt`).
+
+I testi dell'app sono in `lib/l10n/strings.dart`.
 
 ## Aggiornare le carte
 
@@ -48,4 +56,4 @@ l'ultima esecuzione di **Build** e scarica `sorcery-companion-apk` in fondo alla
 ## Prossimi passi
 
 1. Aggiornamento automatico della lista carte quando esce una nuova versione dell'archivio.
-2. Collezione, mazzi, regole (come sul sito).
+2. Mazzi, regole e glossario, scanner (come sul sito).

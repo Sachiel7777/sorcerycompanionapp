@@ -56,7 +56,10 @@ for c in reg["cards"]:
 
 out = {
     "source": "Kairos Archive (kairosarchive.net) - card data and images (c) Erik's Curiosa",
-    "sets": [s["set_name"] for s in reg["sets"]],
+    "sets": [
+        {"name": s["set_name"], "released": s["released_at"], "kind": s["kind"]}
+        for s in reg["sets"]
+    ],
     "cards": cards,
 }
 json.dump(out, open("assets/data/cards.json", "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
