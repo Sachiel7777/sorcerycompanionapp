@@ -126,30 +126,53 @@ class _CardListScreenState extends State<CardListScreen> {
           Expanded(
             child: cards.isEmpty
                 ? const Center(child: Text('Nessuna carta trovata'))
-                : GridView.builder(
-                    padding: const EdgeInsets.all(12),
-                    gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 180,
-                      mainAxisSpacing: 12,
-                      crossAxisSpacing: 12,
-                      childAspectRatio: 488 / 680,
-                    ),
-                    itemCount: cards.length,
-                    itemBuilder: (context, i) {
-                      final card = cards[i];
-                      return InkWell(
-                        borderRadius: BorderRadius.circular(8),
-                        onTap: () => Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => CardDetailScreen(card: card)),
-                        ),
-                        child: Hero(tag: card.id, child: CardArt(card: card)),
-                      );
-                    },
+                : CustomScrollView(
+                    slivers: [
+                      ..._section(null, cards.where((c) => !isLandscape(c)).toList(), portraitRatio, 180),
+                      ..._section('Atlas (Siti)', cards.where(isLandscape).toList(), landscapeRatio, 260),
+                    ],
                   ),
           ),
         ],
       ),
     );
+  }
+
+  /// One block of the list: an optional title and a grid of cards sharing
+  /// the same orientation (Sites are landscape, everything else portrait).
+  List<Widget> _section(String? title, List<SorceryCard> cards, double ratio, double maxWidth) {
+    if (cards.isEmpty) return const [];
+    return [
+      if (title != null)
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          sliver: SliverToBoxAdapter(
+            child: Text('$title · ${cards.length}', style: Theme.of(context).textTheme.titleMedium),
+          ),
+        ),
+      SliverPadding(
+        padding: const EdgeInsets.all(12),
+        sliver: SliverGrid.builder(
+          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: maxWidth,
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+            childAspectRatio: ratio,
+          ),
+          itemCount: cards.length,
+          itemBuilder: (context, i) {
+            final card = cards[i];
+            return InkWell(
+              borderRadius: BorderRadius.circular(8),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => CardDetailScreen(card: card)),
+              ),
+              child: Hero(tag: card.id, child: CardArt(card: card)),
+            );
+          },
+        ),
+      ),
+    ];
   }
 
   void _openFilters() {
