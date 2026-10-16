@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'data/card_repository.dart';
+import 'data/deck_store.dart';
 import 'data/settings.dart';
 import 'l10n/strings.dart';
 import 'screens/home_screen.dart';
@@ -15,13 +16,15 @@ Future<void> main() async {
     yield LicenseEntryWithLineBreaks(['Cinzel'], await rootBundle.loadString('assets/fonts/Cinzel-OFL.txt'));
   });
   final settings = await AppSettings.load();
-  runApp(SorceryApp(settings: settings));
+  final decks = await DeckStore.load();
+  runApp(SorceryApp(settings: settings, decks: decks));
 }
 
 class SorceryApp extends StatelessWidget {
-  const SorceryApp({super.key, required this.settings});
+  const SorceryApp({super.key, required this.settings, required this.decks});
 
   final AppSettings settings;
+  final DeckStore decks;
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +56,7 @@ class SorceryApp extends StatelessWidget {
             if (!snapshot.hasData) {
               return const Scaffold(body: Center(child: CircularProgressIndicator()));
             }
-            return HomeScreen(db: snapshot.data!, settings: settings);
+            return HomeScreen(db: snapshot.data!, settings: settings, decks: decks);
           },
         ),
       ),

@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 
 import '../data/card_repository.dart';
+import '../data/deck_store.dart';
 import '../data/settings.dart';
 import '../l10n/strings.dart';
 import 'card_list_screen.dart';
+import 'decks_screen.dart';
 import 'play_screen.dart';
 import 'sets_screen.dart';
 import 'settings_screen.dart';
 
 /// The main sections of the app, switched from the bar at the bottom.
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, required this.db, required this.settings});
+  const HomeScreen({super.key, required this.db, required this.settings, required this.decks});
 
   final CardDatabase db;
   final AppSettings settings;
+  final DeckStore decks;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -31,7 +34,8 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           CardListScreen(db: widget.db),
           SetsScreen(db: widget.db),
-          PlayScreen(settings: widget.settings, visible: _index == 2),
+          DecksScreen(db: widget.db, store: widget.decks),
+          PlayScreen(settings: widget.settings, visible: _index == 3),
           SettingsScreen(db: widget.db, settings: widget.settings),
         ],
       ),
@@ -48,6 +52,11 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(Icons.collections_bookmark_outlined),
             selectedIcon: const Icon(Icons.collections_bookmark),
             label: s.navSets,
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.layers_outlined),
+            selectedIcon: const Icon(Icons.layers),
+            label: s.navDecks,
           ),
           NavigationDestination(
             icon: const Icon(Icons.favorite_outline),
