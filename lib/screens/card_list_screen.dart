@@ -1,20 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../data/card_repository.dart';
+import '../l10n/strings.dart';
 import '../models/sorcery_card.dart';
+import '../theme.dart';
 import '../widgets/card_art.dart';
 import 'card_detail_screen.dart';
-
-const typeLabels = {
-  'Avatar': 'Avatar',
-  'Minion': 'Minion',
-  'Magic': 'Magia',
-  'Artifact': 'Artefatto',
-  'Aura': 'Aura',
-  'Site': 'Sito',
-};
-
-const elementLabels = {'Air': 'Aria', 'Earth': 'Terra', 'Fire': 'Fuoco', 'Water': 'Acqua'};
 
 enum SortOrder { name, costAsc, costDesc }
 
@@ -68,19 +59,20 @@ class _CardListScreenState extends State<CardListScreen> {
   @override
   Widget build(BuildContext context) {
     final cards = _visible;
+    final s = context.s;
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title ?? 'Sorcery Companion'),
         actions: [
           PopupMenuButton<SortOrder>(
             icon: const Icon(Icons.sort),
-            tooltip: 'Ordina',
+            tooltip: s.sort,
             initialValue: _sort,
-            onSelected: (s) => setState(() => _sort = s),
-            itemBuilder: (_) => const [
-              PopupMenuItem(value: SortOrder.name, child: Text('Nome')),
-              PopupMenuItem(value: SortOrder.costAsc, child: Text('Costo crescente')),
-              PopupMenuItem(value: SortOrder.costDesc, child: Text('Costo decrescente')),
+            onSelected: (order) => setState(() => _sort = order),
+            itemBuilder: (_) => [
+              PopupMenuItem(value: SortOrder.name, child: Text(s.sortName)),
+              PopupMenuItem(value: SortOrder.costAsc, child: Text(s.sortCostAsc)),
+              PopupMenuItem(value: SortOrder.costDesc, child: Text(s.sortCostDesc)),
             ],
           ),
         ],
@@ -93,7 +85,7 @@ class _CardListScreenState extends State<CardListScreen> {
               children: [
                 Expanded(
                   child: SearchBar(
-                    hintText: 'Cerca per nome o testo',
+                    hintText: s.searchHint,
                     leading: const Icon(Icons.search),
                     elevation: const WidgetStatePropertyAll(0),
                     onChanged: (v) => setState(() => _query = v),
@@ -105,7 +97,7 @@ class _CardListScreenState extends State<CardListScreen> {
                   label: Text('$_activeFilters'),
                   child: IconButton.filledTonal(
                     icon: const Icon(Icons.tune),
-                    tooltip: 'Filtri',
+                    tooltip: s.filters,
                     onPressed: _openFilters,
                   ),
                 ),
@@ -116,16 +108,16 @@ class _CardListScreenState extends State<CardListScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             child: Align(
               alignment: Alignment.centerLeft,
-              child: Text('${cards.length} carte', style: Theme.of(context).textTheme.labelMedium),
+              child: Text(s.cardCount(cards.length), style: Theme.of(context).textTheme.labelMedium),
             ),
           ),
           Expanded(
             child: cards.isEmpty
-                ? const Center(child: Text('Nessuna carta trovata'))
+                ? Center(child: Text(s.noCards))
                 : CustomScrollView(
                     slivers: [
                       ..._section(null, cards.where((c) => !isLandscape(c)).toList(), portraitRatio, 180),
-                      ..._section('Atlas (Siti)', cards.where(isLandscape).toList(), landscapeRatio, 260),
+                      ..._section(s.atlas, cards.where(isLandscape).toList(), landscapeRatio, 260),
                     ],
                   ),
           ),
@@ -140,11 +132,8 @@ class _CardListScreenState extends State<CardListScreen> {
     if (cards.isEmpty) return const [];
     return [
       if (title != null)
-        SliverPadding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-          sliver: SliverToBoxAdapter(
-            child: Text('$title · ${cards.length}', style: Theme.of(context).textTheme.titleMedium),
-          ),
+        SliverToBoxAdapter(
+          child: SectionTitle('$title · ${cards.length}', padding: const EdgeInsets.fromLTRB(16, 16, 16, 0)),
         ),
       SliverPadding(
         padding: const EdgeInsets.all(12),
@@ -184,18 +173,20 @@ class _CardListScreenState extends State<CardListScreen> {
             setSheet(() {});
           }
 
+          final s = context.s;
           Widget section(
             String title,
             List<String> values,
-            Set<String> selected, [
-            Map<String, String> labels = const {},
-          ]) {
+            Set<String> selected, {
+            String Function(String)? label,
+            Map<String, Color> colors = const {},
+          }) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: Theme.of(context).textTheme.titleSmall),
+                  SectionTitle(title, padding: EdgeInsets.zero),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
@@ -203,7 +194,8 @@ class _CardListScreenState extends State<CardListScreen> {
                     children: [
                       for (final v in values)
                         FilterChip(
-                          label: Text(labels[v] ?? v),
+                          avatar: colors[v] == null ? null : Icon(elementIcons[v], color: colors[v], size: 18),
+                          label: Text(label?.call(v) ?? v),
                           selected: selected.contains(v),
                           onSelected: (_) => toggle(selected, v),
                         ),
@@ -220,10 +212,10 @@ class _CardListScreenState extends State<CardListScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  section('Espansione', widget.db.sets, _sets),
-                  section('Tipo', widget.db.types, _types, typeLabels),
-                  section('Elemento', CardDatabase.elements, _elements, elementLabels),
-                  section('Rarità', widget.db.rarities, _rarities),
+                  section(s.filterSet, widget.db.sets, _sets),
+                  section(s.filterType, widget.db.types, _types, label: s.type),
+                  section(s.filterElement, CardDatabase.elements, _elements, label: s.element, colors: elementColors),
+                  section(s.filterRarity, widget.db.rarities, _rarities),
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
@@ -238,7 +230,7 @@ class _CardListScreenState extends State<CardListScreen> {
                               });
                               setSheet(() {});
                             },
-                      child: const Text('Azzera filtri'),
+                      child: Text(s.clearFilters),
                     ),
                   ),
                 ],

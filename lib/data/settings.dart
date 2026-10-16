@@ -16,6 +16,17 @@ class AppSettings extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// The app language, or null to follow the device.
+  Locale? get locale {
+    final code = _prefs.getString('language');
+    return code == null ? null : Locale(code);
+  }
+
+  set locale(Locale? value) {
+    value == null ? _prefs.remove('language') : _prefs.setString('language', value.languageCode);
+    notifyListeners();
+  }
+
   /// Life each player starts with on the Play screen.
   int get startingLife => _prefs.getInt('startingLife') ?? 20;
 

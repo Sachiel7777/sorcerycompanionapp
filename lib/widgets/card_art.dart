@@ -24,21 +24,31 @@ class CardArt extends StatelessWidget {
     final landscape = isLandscape(card);
     return AspectRatio(
       aspectRatio: landscape ? landscapeRatio : portraitRatio,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(large ? 14 : 8),
-        child: url == null
-            ? _Placeholder(card: card)
-            : CachedNetworkImage(
-                imageUrl: url,
-                httpHeaders: imageHeaders,
-                cacheManager: cardImageCache,
-                fit: BoxFit.contain,
-                imageBuilder: landscape
-                    ? (context, provider) => _LandscapeImage(provider: provider)
-                    : null,
-                placeholder: (_, _) => _Placeholder(card: card),
-                errorWidget: (_, _, _) => _Placeholder(card: card),
-              ),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(large ? 14 : 8),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.25),
+              blurRadius: large ? 16 : 6,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(large ? 14 : 8),
+          child: url == null
+              ? _Placeholder(card: card)
+              : CachedNetworkImage(
+                  imageUrl: url,
+                  httpHeaders: imageHeaders,
+                  cacheManager: cardImageCache,
+                  fit: BoxFit.contain,
+                  imageBuilder: landscape ? (context, provider) => _LandscapeImage(provider: provider) : null,
+                  placeholder: (_, _) => _Placeholder(card: card),
+                  errorWidget: (_, _, _) => _Placeholder(card: card),
+                ),
+        ),
       ),
     );
   }
