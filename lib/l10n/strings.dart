@@ -1,6 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
+import '../data/deck_rules.dart';
+import '../models/deck.dart';
+
 /// Every text the app shows, in Italian and English.
 /// Card names and rules text stay as published (English only).
 class AppStrings {
@@ -21,6 +24,7 @@ class AppStrings {
   String get navSets => _t('Set', 'Sets');
   String get navPlay => _t('Partita', 'Play');
   String get navSettings => _t('Impostazioni', 'Settings');
+  String get navDecks => _t('Mazzi', 'Decks');
 
   // Card list
   String get sort => _t('Ordina', 'Sort');
@@ -130,6 +134,82 @@ class AppStrings {
   String get stop => _t('Interrompi', 'Stop');
   String get downloadAll => _t('Scarica tutte le immagini', 'Download all images');
   String get clearImages => _t('Cancella immagini scaricate', 'Delete downloaded images');
+
+  // Decks
+  String get decksTitle => _t('Mazzi', 'Decks');
+  String get noDecks =>
+      _t('Ancora nessun mazzo. Creane uno o importa una lista.', 'No decks yet. Create one or import a list.');
+  String get newDeck => _t('Nuovo mazzo', 'New deck');
+  String get importDeck => _t('Importa lista', 'Import list');
+  String get deckName => _t('Nome del mazzo', 'Deck name');
+  String get untitledDeck => _t('Mazzo senza nome', 'Untitled deck');
+  String get create => _t('Crea', 'Create');
+  String get save => _t('Salva', 'Save');
+  String get rename => _t('Rinomina', 'Rename');
+  String get delete => _t('Elimina', 'Delete');
+  String deleteDeckQuestion(String name) => _t('Eliminare "$name"?', 'Delete "$name"?');
+  String get deleteDeckText =>
+      _t('Il mazzo verrà cancellato dal dispositivo.', 'The deck will be removed from this device.');
+  String get exportDeck => _t('Esporta come testo', 'Export as text');
+  String get copy => _t('Copia', 'Copy');
+  String get close => _t('Chiudi', 'Close');
+  String get copied => _t('Lista copiata negli appunti', 'List copied to the clipboard');
+  String get importHint => _t(
+    'Incolla la lista del mazzo, una carta per riga (per esempio "4 Apprentice Wizard"). '
+        'Le intestazioni Avatar, Spellbook, Atlas e Collection sono facoltative.',
+    'Paste the deck list, one card per line (for example "4 Apprentice Wizard"). '
+        'Avatar, Spellbook, Atlas and Collection headings are optional.',
+  );
+  String get paste => _t('Incolla', 'Paste');
+  String get importAction => _t('Importa', 'Import');
+  String importUnknown(int n) => _t(
+    n == 1 ? 'Una riga non corrisponde a nessuna carta:' : '$n righe non corrispondono a nessuna carta:',
+    n == 1 ? 'One line matched no card:' : '$n lines matched no card:',
+  );
+  String get nothingImported => _t('Nessuna carta riconosciuta nella lista.', 'No cards recognised in the list.');
+  String get addCards => _t('Aggiungi carte', 'Add cards');
+  String get addCardsHint => _t(
+    'Tocca una carta per aggiungerla, tienila premuta per vederla.',
+    'Tap a card to add it, long press to see it.',
+  );
+  String section(DeckSection s) => switch (s) {
+    DeckSection.avatar => 'Avatar',
+    DeckSection.spellbook => 'Spellbook',
+    DeckSection.atlas => 'Atlas',
+    DeckSection.collection => 'Collection',
+  };
+  String get legalDeck => _t('Mazzo valido per il formato Constructed', 'Legal for the Constructed format');
+  String issue(DeckIssue i) => switch (i) {
+    AvatarCount(count: 0) => _t('Manca l\'Avatar', 'No Avatar yet'),
+    AvatarCount(:final count) => _t(
+      'Serve un solo Avatar (ne hai $count)',
+      'Only one Avatar allowed (you have $count)',
+    ),
+    TooFew(:final section, :final count, :final min) => _t(
+      '${this.section(section)}: $count di almeno $min',
+      '${this.section(section)}: $count of at least $min',
+    ),
+    CollectionTooBig(:final count) => _t(
+      'Collection: $count carte, al massimo $maxCollection',
+      'Collection: $count cards, at most $maxCollection',
+    ),
+    TooManyCopies(:final card, :final count, :final limit) => _t(
+      '${card.name}: $count copie, al massimo $limit (${card.rarity})',
+      '${card.name}: $count copies, at most $limit (${card.rarity})',
+    ),
+    WrongSection(:final card, :final section) => _t(
+      '${card.name} non può stare nello ${this.section(section)}',
+      '${card.name} can\'t go in the ${this.section(section)}',
+    ),
+  };
+  String get manaCurve => _t('Curva di mana', 'Mana curve');
+  String get atlasThreshold => _t('Soglie date dall\'Atlas', 'Threshold from the Atlas');
+  String get spellbookElements => _t('Elementi dello Spellbook', 'Spellbook elements');
+  String get moveToCollection => _t('Sposta nella Collection', 'Move to Collection');
+  String get moveToDeck => _t('Rimetti nel mazzo', 'Move back to the deck');
+  String get removeAll => _t('Togli tutte le copie', 'Remove all copies');
+  String deckSummary(int spells, int sites) => _t('$spells carte · $sites siti', '$spells spells · $sites sites');
+  String get emptySection => _t('Nessuna carta', 'No cards');
 
   static const _monthsIt = [
     'gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', //

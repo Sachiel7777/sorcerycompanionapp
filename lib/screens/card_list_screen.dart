@@ -10,7 +10,14 @@ import 'card_detail_screen.dart';
 enum SortOrder { name, costAsc, costDesc }
 
 class CardListScreen extends StatefulWidget {
-  const CardListScreen({super.key, required this.db, this.title, this.initialSets = const {}});
+  const CardListScreen({
+    super.key,
+    required this.db,
+    this.title,
+    this.initialSets = const {},
+    this.onPick,
+    this.countOf,
+  });
 
   final CardDatabase db;
 
@@ -19,6 +26,13 @@ class CardListScreen extends StatefulWidget {
 
   /// Expansions selected in the filters when the screen opens.
   final Set<String> initialSets;
+
+  /// When set, tapping a card picks it (e.g. adds it to a deck) and a long
+  /// press opens its details.
+  final void Function(SorceryCard card)? onPick;
+
+  /// Shown as a badge on each card, e.g. copies already in the deck.
+  final int Function(SorceryCard card)? countOf;
 
   @override
   State<CardListScreen> createState() => _CardListScreenState();
@@ -147,12 +161,32 @@ class _CardListScreenState extends State<CardListScreen> {
           itemCount: cards.length,
           itemBuilder: (context, i) {
             final card = cards[i];
+            void details() =>
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => CardDetailScreen(card: card)));
+            final pick = widget.onPick;
+            final count = widget.countOf?.call(card) ?? 0;
             return InkWell(
               borderRadius: BorderRadius.circular(8),
-              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => CardDetailScreen(card: card))),
-              child: Hero(
-                tag: card.id,
-                child: CardArt(card: card),
+              onTap: pick == null ? details : () => setState(() => pick(card)),
+              onLongPress: pick == null ? null : details,
+              child: Stack(
+                children: [
+                  Hero(
+                    tag: card.id,
+                    child: CardArt(card: card),
+                  ),
+                  if (count > 0)
+                    Positioned(
+                      right: 6,
+                      top: 6,
+                      child: CircleAvatar(
+                        radius: 14,
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                        child: Text('$count', style: const TextStyle(fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                ],
               ),
             );
           },

@@ -12,6 +12,9 @@ un solo codice produce l'app per tutte le piattaforme.
 - Scheda della carta: statistiche, testo, tutte le stampe (cliccando una stampa si vede la sua immagine).
 - Le immagini già viste restano in cache sul telefono.
 - **Set**: tutte le espansioni con numero di carte e data di uscita; toccandone una si aprono le sue carte.
+- **Mazzi**: mazzi salvati sul telefono (Avatar, Spellbook, Atlas, Collection), con controllo delle
+  regole del formato Constructed, curva di mana e soglie; importa ed esporta come lista di testo
+  ("4 Apprentice Wizard", una carta per riga).
 - **Partita**: contatore per due giocatori (vita, mana e soglie dei quattro elementi), con la metà
   dell'avversario capovolta e lo schermo sempre acceso.
 - **Impostazioni**: lingua (italiano o inglese, o quella del telefono), tema chiaro/scuro, vita iniziale, schermo acceso, "Uso offline" per scaricare
@@ -56,4 +59,4 @@ l'ultima esecuzione di **Build** e scarica `sorcery-companion-apk` in fondo alla
 ## Prossimi passi
 
 1. Aggiornamento automatico della lista carte quando esce una nuova versione dell'archivio.
-2. Mazzi, regole e glossario, scanner (come sul sito).
+2. Regole e glossario, scanner (come sul sito).
