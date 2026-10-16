@@ -4,11 +4,30 @@ import 'package:flutter/services.dart';
 
 import '../models/sorcery_card.dart';
 
-class CardDatabase {
-  const CardDatabase({required this.sets, required this.cards});
+/// An expansion (or the promo cards), as listed on the Sets page.
+class CardSet {
+  const CardSet({required this.name, required this.released, required this.isPromo});
 
-  final List<String> sets;
+  final String name;
+  final DateTime released;
+  final bool isPromo;
+
+  factory CardSet.fromJson(Map<String, dynamic> json) => CardSet(
+    name: json['name'] as String,
+    released: DateTime.parse(json['released'] as String),
+    isPromo: json['kind'] == 'promo',
+  );
+}
+
+class CardDatabase {
+  const CardDatabase({required this.setInfo, required this.cards});
+
+  final List<CardSet> setInfo;
   final List<SorceryCard> cards;
+
+  List<String> get sets => [for (final s in setInfo) s.name];
+
+  List<SorceryCard> cardsInSet(String set) => cards.where((c) => c.sets.contains(set)).toList();
 
   List<String> get types => _distinct(cards.map((c) => c.type));
   List<String> get rarities => _distinct(cards.map((c) => c.rarity).whereType<String>());
@@ -21,10 +40,9 @@ class CardDatabase {
   static Future<CardDatabase> loadBundled() async {
     final raw = await rootBundle.loadString('assets/data/cards.json');
     final json = jsonDecode(raw) as Map<String, dynamic>;
-    final cards = (json['cards'] as List)
-        .map((c) => SorceryCard.fromJson(c as Map<String, dynamic>))
-        .toList()
+    final cards = (json['cards'] as List).map((c) => SorceryCard.fromJson(c as Map<String, dynamic>)).toList()
       ..sort((a, b) => a.name.compareTo(b.name));
-    return CardDatabase(sets: List<String>.from(json['sets'] as List), cards: cards);
+    final sets = (json['sets'] as List).map((s) => CardSet.fromJson(s as Map<String, dynamic>)).toList();
+    return CardDatabase(setInfo: sets, cards: cards);
   }
 }
