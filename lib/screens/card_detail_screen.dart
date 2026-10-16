@@ -78,14 +78,14 @@ class _CardDetailScreenState extends State<CardDetailScreen> {
             ? Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(width: 340, child: art),
+                  SizedBox(width: isLandscape(card) ? 460 : 340, child: art),
                   const SizedBox(width: 24),
                   Expanded(child: info),
                 ],
               )
             : Column(
                 children: [
-                  ConstrainedBox(constraints: const BoxConstraints(maxWidth: 360), child: art),
+                  ConstrainedBox(constraints: BoxConstraints(maxWidth: isLandscape(card) ? 520 : 360), child: art),
                   const SizedBox(height: 16),
                   info,
                 ],
