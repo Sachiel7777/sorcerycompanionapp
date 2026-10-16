@@ -19,6 +19,9 @@ un solo codice produce l'app per tutte le piattaforme.
   dell'avversario capovolta e lo schermo sempre acceso.
 - **Impostazioni**: lingua (italiano o inglese, o quella del telefono), tema chiaro/scuro, vita iniziale, schermo acceso, "Uso offline" per scaricare
   tutte le immagini in una volta, crediti.
+- **Regole e glossario** (da Impostazioni): riassunto delle regole e glossario di parole chiave e termini,
+  in italiano e inglese, scritti per questa app (`lib/data/rules_content.dart`), con il link al regolamento
+  ufficiale. Le parole chiave nella scheda di una carta si toccano per leggerne il significato.
 
 ## Da dove vengono i dati
 
@@ -59,4 +62,4 @@ l'ultima esecuzione di **Build** e scarica `sorcery-companion-apk` in fondo alla
 ## Prossimi passi
 
 1. Aggiornamento automatico della lista carte quando esce una nuova versione dell'archivio.
-2. Regole e glossario, scanner (come sul sito).
+2. Scanner delle carte con la fotocamera (come sul sito).

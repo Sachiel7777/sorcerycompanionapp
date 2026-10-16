@@ -211,6 +211,27 @@ class AppStrings {
   String deckSummary(int spells, int sites) => _t('$spells carte · $sites siti', '$spells spells · $sites sites');
   String get emptySection => _t('Nessuna carta', 'No cards');
 
+  // Rules and glossary
+  String get rulesGroup => _t('Regole', 'Rules');
+  String get rulesTitle => _t('Regole in breve', 'Rules at a glance');
+  String get rulesHint => _t('Come si gioca, in poche pagine', 'How to play, in a few pages');
+  String get codexTitle => _t('Glossario', 'Glossary');
+  String get codexHint => _t('Parole chiave e termini di gioco', 'Keywords and game terms');
+  String get rulesNotice => _t(
+    'Riassunto scritto per questa app. Per i casi dubbi vale il regolamento ufficiale.',
+    'A summary written for this app. When in doubt, the official rulebook decides.',
+  );
+  String get officialRulebook => _t('Regolamento ufficiale (PDF)', 'Official rulebook (PDF)');
+  String get openLinkFailed =>
+      _t('Non riesco ad aprire il link. Eccolo da copiare:', 'Couldn\'t open the link. Here it is to copy:');
+  String get searchCodex => _t('Cerca nel glossario', 'Search the glossary');
+  String get keywordsSection => _t('Parole chiave', 'Keywords');
+  String get keywordLabel => _t('Parola chiave', 'Keyword');
+  String get termLabel => _t('Termine di gioco', 'Game term');
+  String get termsSection => _t('Termini di gioco', 'Game terms');
+  String get noCodexResults => _t('Nessuna voce trovata', 'No entries found');
+  String get cardsWithKeyword => _t('Carte con questa parola chiave', 'Cards with this keyword');
+
   static const _monthsIt = [
     'gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', //
     'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre',

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../data/rules_content.dart';
 import '../models/sorcery_card.dart';
 import '../widgets/card_art.dart';
 import '../l10n/strings.dart';
 import '../theme.dart';
+import 'codex_screen.dart';
 
 class CardDetailScreen extends StatefulWidget {
   const CardDetailScreen({super.key, required this.card});
@@ -45,6 +47,25 @@ class _CardDetailScreenState extends State<CardDetailScreen> {
         ),
         const SizedBox(height: 12),
         Wrap(spacing: 8, runSpacing: 8, children: _stats(context, card)),
+        if (card.keywords.isNotEmpty) ...[
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final k in card.keywords)
+                ActionChip(
+                  avatar: const Icon(Icons.help_outline, size: 18),
+                  label: Text(k),
+                  visualDensity: VisualDensity.compact,
+                  onPressed: switch (codexEntry(k)) {
+                    final entry? => () => showCodexEntry(context, entry),
+                    null => null,
+                  },
+                ),
+            ],
+          ),
+        ],
         if (card.rules.isNotEmpty) ...[const SizedBox(height: 16), Text(card.rules, style: text.bodyLarge)],
         if (printing?.flavour != null) ...[
           const SizedBox(height: 12),
