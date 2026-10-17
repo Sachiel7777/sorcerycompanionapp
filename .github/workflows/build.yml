@@ -22,6 +22,24 @@ jobs:
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test
+      # Sign with the project's own release key when the secrets are set
+      # (pull requests from forks don't get secrets and use the debug key).
+      - name: Set up release signing
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "::warning::ANDROID_KEYSTORE_BASE64 is not set; the APK is signed with a throwaway debug key."
+            exit 0
+          fi
+          echo "$KEYSTORE_BASE64" | base64 -d > android/app/release.jks
+          cat > android/key.properties <<EOF
+          storeFile=release.jks
+          storePassword=$KEYSTORE_PASSWORD
+          keyAlias=release
+          keyPassword=$KEYSTORE_PASSWORD
+          EOF
       - run: flutter build apk --release
       - uses: actions/upload-artifact@v4
         with:
