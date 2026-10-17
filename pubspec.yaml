@@ -41,7 +41,6 @@ dependencies:
   shared_preferences: ^2.5.6
   wakelock_plus: ^1.8.1
   url_launcher: ^6.3.2
-  google_mlkit_text_recognition: ^0.17.1
   image_picker: ^1.2.4
   file_picker: ^13.1.0
 
@@ -70,6 +69,7 @@ flutter:
   assets:
     - assets/data/cards.json
     - assets/fonts/Cinzel-OFL.txt
+    - assets/licenses/tesseract-apache-2.0.txt
 
   fonts:
     - family: Cinzel

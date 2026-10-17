@@ -26,8 +26,9 @@ codebase builds the app for every platform.
   terms, in Italian and English, written for this app (`lib/data/rules_content.dart`), with a link
   to the official rulebook. Keywords on a card's page can be tapped to read what they mean.
 - **Scan** (Android, button at the top of the card list): take a photo of a card, or pick one from
-  the gallery, and the app reads its name and lists the matching cards. Text recognition (Google ML
-  Kit) runs on the phone, offline. While adding cards to a deck, a scanned card goes into the deck.
+  the gallery, and the app reads its name and lists the matching cards. Text recognition
+  ([Tesseract](https://github.com/tesseract-ocr/tesseract), open source) runs on the phone,
+  offline. While adding cards to a deck, a scanned card goes into the deck.
 
 ## Where the data comes from
 
@@ -43,6 +44,13 @@ they are published in. The title font is Cinzel (SIL Open Font License,
 `assets/fonts/Cinzel-OFL.txt`).
 
 App texts live in `lib/l10n/strings.dart`.
+
+## License
+
+The app's code is free software under the [GNU General Public License v3.0](LICENSE) or, at your
+option, any later version. This covers the code only, not the card names, texts and images
+(see above), which stay © Erik's Curiosa. The card scanner bundles Tesseract OCR and its English
+model, both Apache License 2.0 (`assets/licenses/tesseract-apache-2.0.txt`).
 
 ## Updating the cards
 

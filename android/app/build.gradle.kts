@@ -54,11 +54,23 @@ android {
         }
     }
 
+    // Google's signed dependency list inside the APK is not open source, and
+    // F-Droid refuses APKs that carry it.
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
+    }
+
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName(if (hasReleaseKey) "release" else "debug")
         }
     }
+}
+
+dependencies {
+    // Tesseract OCR (Apache 2.0) for the card scanner; published on JitPack.
+    implementation("cz.adaptech.tesseract4android:tesseract4android:4.9.0")
 }
 
 kotlin {
