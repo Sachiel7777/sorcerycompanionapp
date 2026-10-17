@@ -254,20 +254,62 @@ class AppStrings {
   String get backupGroup => _t('Backup', 'Backup');
   String get exportBackup => _t('Esporta backup', 'Export backup');
   String get exportBackupHint => _t(
-    'Salva mazzi e impostazioni in un file, da conservare o portare su un altro dispositivo',
-    'Save decks and settings to a file, to keep or move to another device',
+    'Salva mazzi, collezioni e impostazioni in un file, da conservare o portare su un altro dispositivo',
+    'Save decks, collections and settings to a file, to keep or move to another device',
   );
   String get importBackup => _t('Importa backup', 'Import backup');
   String get importBackupHint => _t('Da un file creato con questa app', 'From a file made with this app');
   String get backupSaved => _t('Backup salvato', 'Backup saved');
-  String backupImported(int added, int updated) =>
-      _t('Mazzi importati: $added nuovi, $updated aggiornati', 'Decks imported: $added new, $updated updated');
+  String backupImported(int added, int updated, int collectionsAdded, int collectionsUpdated) => _t(
+    'Mazzi: $added nuovi, $updated aggiornati. Collezioni: $collectionsAdded nuove, $collectionsUpdated aggiornate.',
+    'Decks: $added new, $updated updated. Collections: $collectionsAdded new, $collectionsUpdated updated.',
+  );
   String get backupInvalid =>
       _t('Questo file non è un backup di Sorcery Companion.', 'This file is not a Sorcery Companion backup.');
   String get fileFailed => _t('Non sono riuscito a usare il file.', 'Couldn\'t use the file.');
   String get fromFile => _t('Da file', 'From file');
   String get saveFile => _t('Salva file', 'Save file');
   String get fileSaved => _t('File salvato', 'File saved');
+
+  // Collections and prices
+  String get collectionsTitle => _t('Collezioni', 'Collections');
+  String get newCollection => _t('Nuova collezione', 'New collection');
+  String get renameCollection => _t('Rinomina collezione', 'Rename collection');
+  String get collectionName => _t('Nome', 'Name');
+  String get noCollections => _t(
+    'Nessuna collezione. Creane una, poi apri una carta e usa + e − accanto a ogni stampa '
+        'per segnare le copie che possiedi.',
+    'No collections yet. Create one, then open a card and use + and − next to each printing '
+        'to record the copies you own.',
+  );
+  String get emptyCollection => _t(
+    'La collezione è vuota. Apri una carta e usa + accanto a una stampa, '
+        'oppure aggiungi un mazzo dal suo menu.',
+    'The collection is empty. Open a card and use + next to a printing, '
+        'or add a deck from its menu.',
+  );
+  String get createCollectionForCopies =>
+      _t('Crea una collezione per segnare le copie', 'Create a collection to record your copies');
+  String deleteCollectionText(String name) => _t(
+    '"$name" e le copie segnate verranno cancellate.',
+    '"$name" and the copies recorded in it will be removed.',
+  );
+  String get deleteCollectionQuestion => _t('Eliminare la collezione?', 'Delete the collection?');
+  String printingCount(int n) => english ? (n == 1 ? '1 printing' : '$n printings') : (n == 1 ? '1 stampa' : '$n stampe');
+  String copyCount(int n) => english ? (n == 1 ? '1 copy' : '$n copies') : (n == 1 ? '1 copia' : '$n copie');
+  String get addCopy => _t('Aggiungi una copia', 'Add a copy');
+  String get removeCopy => _t('Togli una copia', 'Remove a copy');
+  String get marketPrices => _t('Prezzi di mercato', 'Market prices');
+  String get addDeckToCollection => _t('Aggiungi alla collezione', 'Add to collection');
+  String addDeckToCollectionText(int copies) => _t(
+    'Le carte del mazzo (${copyCount(copies)}) vengono aggiunte alla collezione scelta, nella loro stampa principale. '
+        'Le copie che hai già restano.',
+    'The deck\'s cards (${copyCount(copies)}) are added to the chosen collection, in their main printing. '
+        'Copies you already have are kept.',
+  );
+  String deckAddedToCollection(int copies, String name) =>
+      _t('${copyCount(copies)} aggiunte a "$name"', '${copyCount(copies)} added to "$name"');
+  String get add => _t('Aggiungi', 'Add');
 
   static const _monthsIt = [
     'gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', //

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../data/backup.dart';
 import '../data/card_repository.dart';
+import '../data/collection_store.dart';
 import '../data/deck_store.dart';
 import '../data/settings.dart';
 import '../data/text_files.dart';
@@ -22,7 +23,11 @@ class SettingsScreen extends StatelessWidget {
   Future<void> _exportBackup(BuildContext context) async {
     final s = context.s;
     final messenger = ScaffoldMessenger.of(context);
-    final backup = Backup(decks: decks.decks, settings: settings.toBackup());
+    final backup = Backup(
+      decks: decks.decks,
+      collections: CollectionScope.of(context).collections,
+      settings: settings.toBackup(),
+    );
     try {
       if (await saveTextFile(backup.fileName, backup.toJson(), mimeType: 'application/json')) {
         messenger.showSnackBar(SnackBar(content: Text(s.backupSaved)));
@@ -35,6 +40,7 @@ class SettingsScreen extends StatelessWidget {
   Future<void> _importBackup(BuildContext context) async {
     final s = context.s;
     final messenger = ScaffoldMessenger.of(context);
+    final collections = CollectionScope.of(context);
     final String? text;
     try {
       text = await pickTextFile();
@@ -51,8 +57,15 @@ class SettingsScreen extends StatelessWidget {
       return;
     }
     final result = decks.merge(backup.decks);
+    final fromCollections = collections.merge(backup.collections);
     settings.restore(backup.settings);
-    messenger.showSnackBar(SnackBar(content: Text(s.backupImported(result.added, result.updated))));
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          s.backupImported(result.added, result.updated, fromCollections.added, fromCollections.updated),
+        ),
+      ),
+    );
   }
 
   @override

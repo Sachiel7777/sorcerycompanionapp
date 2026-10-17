@@ -1,16 +1,19 @@
 import 'dart:convert';
 
 import '../models/deck.dart';
+import 'collection_store.dart';
 
 /// A backup file holds everything the app keeps on the device, so it can be
 /// moved to another phone or computer without an account or a server.
 class Backup {
-  Backup({required this.decks, this.settings = const {}, DateTime? created}) : created = created ?? DateTime.now();
+  Backup({required this.decks, this.collections = const [], this.settings = const {}, DateTime? created})
+    : created = created ?? DateTime.now();
 
   static const _app = 'sorcery-companion';
   static const _version = 1;
 
   final List<Deck> decks;
+  final List<CardCollection> collections;
 
   /// Preference keys and values, as saved by [AppSettings].
   final Map<String, Object> settings;
@@ -21,6 +24,7 @@ class Backup {
     'version': _version,
     'created': created.toIso8601String(),
     'decks': [for (final d in decks) d.toJson()],
+    'collections': [for (final c in collections) c.toJson()],
     'settings': settings,
   });
 
@@ -40,6 +44,9 @@ class Backup {
     }
     return Backup(
       decks: [for (final d in json['decks'] as List? ?? const []) Deck.fromJson(d as Map<String, dynamic>)],
+      collections: [
+        for (final c in json['collections'] as List? ?? const []) CardCollection.fromJson(c as Map<String, dynamic>),
+      ],
       settings: {
         for (final e in (json['settings'] as Map<String, dynamic>? ?? const {}).entries)
           if (e.value is String || e.value is num || e.value is bool) e.key: e.value as Object,

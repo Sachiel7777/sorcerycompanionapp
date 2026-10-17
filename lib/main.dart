@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'data/card_repository.dart';
+import 'data/collection_store.dart';
 import 'data/deck_store.dart';
 import 'data/settings.dart';
 import 'l10n/strings.dart';
@@ -17,7 +18,8 @@ Future<void> main() async {
   });
   final settings = await AppSettings.load();
   final decks = await DeckStore.load();
-  runApp(SorceryApp(settings: settings, decks: decks));
+  final collections = await CollectionStore.load();
+  runApp(CollectionScope(store: collections, child: SorceryApp(settings: settings, decks: decks)));
 }
 
 class SorceryApp extends StatelessWidget {

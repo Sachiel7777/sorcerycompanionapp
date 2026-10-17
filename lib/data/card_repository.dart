@@ -26,6 +26,12 @@ class CardDatabase {
   final List<SorceryCard> cards;
   final Map<String, SorceryCard> byId;
 
+  /// Printing id → the card it belongs to, for looking up collection entries.
+  late final Map<String, SorceryCard> cardByPrinting = {
+    for (final c in cards)
+      for (final p in c.printings) p.id: c,
+  };
+
   List<String> get sets => [for (final s in setInfo) s.name];
 
   List<SorceryCard> cardsInSet(String set) => cards.where((c) => c.sets.contains(set)).toList();
