@@ -19,6 +19,9 @@ codebase builds the app for every platform.
   opponent's half upside down and the screen kept on.
 - **Settings**: language (Italian, English or the device's), light/dark theme, starting life,
   keep screen on, "Offline use" to download every image at once, credits.
+- **Backup** (in Settings): export decks and settings to a JSON file and import them back, on this
+  device or another one, with no account or server. A single deck can also be saved as a text file
+  from its export dialog, and the deck import dialog can read a text file.
 - **Rules and glossary** (from Settings): a rules summary and a glossary of keywords and game
   terms, in Italian and English, written for this app (`lib/data/rules_content.dart`), with a link
   to the official rulebook. Keywords on a card's page can be tapped to read what they mean.
@@ -65,4 +68,3 @@ latest **Build** run and download `sorcery-companion-apk` at the bottom of the p
 ## Next steps
 
 1. Update the card list automatically when a new archive version comes out.
-2. Backup of decks and settings to a file, to move them to another device without an account.

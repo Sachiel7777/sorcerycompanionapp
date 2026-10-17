@@ -5,6 +5,7 @@ import '../data/card_repository.dart';
 import '../data/deck_rules.dart';
 import '../data/deck_store.dart';
 import '../data/deck_text.dart';
+import '../data/text_files.dart';
 import '../l10n/strings.dart';
 import '../models/deck.dart';
 import '../widgets/card_art.dart';
@@ -74,6 +75,20 @@ class DecksScreen extends StatelessWidget {
           ),
         ),
         actions: [
+          TextButton.icon(
+            icon: const Icon(Icons.folder_open),
+            label: Text(s.fromFile),
+            onPressed: () async {
+              try {
+                final text = await pickTextFile();
+                if (text != null) controller.text = text;
+              } catch (_) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(s.fileFailed)));
+                }
+              }
+            },
+          ),
           TextButton(onPressed: () => Navigator.pop(context), child: Text(s.cancel)),
           FilledButton(onPressed: () => Navigator.pop(context, controller.text), child: Text(s.importAction)),
         ],

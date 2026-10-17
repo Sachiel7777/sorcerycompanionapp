@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
           SetsScreen(db: widget.db),
           DecksScreen(db: widget.db, store: widget.decks),
           PlayScreen(settings: widget.settings, visible: _index == 3),
-          SettingsScreen(db: widget.db, settings: widget.settings),
+          SettingsScreen(db: widget.db, settings: widget.settings, decks: widget.decks),
         ],
       ),
       bottomNavigationBar: NavigationBar(

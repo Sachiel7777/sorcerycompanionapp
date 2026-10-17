@@ -38,6 +38,25 @@ class DeckStore extends ChangeNotifier {
     save();
   }
 
+  /// Adds decks from a backup. A deck already here (same id) is replaced by
+  /// the backup's copy only if that copy is newer. Returns how many decks
+  /// were added and how many replaced.
+  ({int added, int updated}) merge(List<Deck> incoming) {
+    var added = 0, updated = 0;
+    for (final deck in incoming) {
+      final i = _decks.indexWhere((d) => d.id == deck.id);
+      if (i < 0) {
+        _decks.add(deck);
+        added++;
+      } else if (deck.updated.isAfter(_decks[i].updated)) {
+        _decks[i] = deck;
+        updated++;
+      }
+    }
+    if (added + updated > 0) save();
+    return (added: added, updated: updated);
+  }
+
   /// Call after changing a deck in place.
   void save() {
     _prefs.setString(_key, jsonEncode([for (final d in _decks) d.toJson()]));

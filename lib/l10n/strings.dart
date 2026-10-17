@@ -250,6 +250,25 @@ class AppStrings {
   );
   String get scanFailed => _t('Non sono riuscito a leggere la foto.', 'Couldn\'t read the photo.');
 
+  // Backup and files
+  String get backupGroup => _t('Backup', 'Backup');
+  String get exportBackup => _t('Esporta backup', 'Export backup');
+  String get exportBackupHint => _t(
+    'Salva mazzi e impostazioni in un file, da conservare o portare su un altro dispositivo',
+    'Save decks and settings to a file, to keep or move to another device',
+  );
+  String get importBackup => _t('Importa backup', 'Import backup');
+  String get importBackupHint => _t('Da un file creato con questa app', 'From a file made with this app');
+  String get backupSaved => _t('Backup salvato', 'Backup saved');
+  String backupImported(int added, int updated) =>
+      _t('Mazzi importati: $added nuovi, $updated aggiornati', 'Decks imported: $added new, $updated updated');
+  String get backupInvalid =>
+      _t('Questo file non è un backup di Sorcery Companion.', 'This file is not a Sorcery Companion backup.');
+  String get fileFailed => _t('Non sono riuscito a usare il file.', 'Couldn\'t use the file.');
+  String get fromFile => _t('Da file', 'From file');
+  String get saveFile => _t('Salva file', 'Save file');
+  String get fileSaved => _t('File salvato', 'File saved');
+
   static const _monthsIt = [
     'gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', //
     'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre',

@@ -5,6 +5,7 @@ import '../data/card_repository.dart';
 import '../data/deck_rules.dart';
 import '../data/deck_store.dart';
 import '../data/deck_text.dart';
+import '../data/text_files.dart';
 import '../l10n/strings.dart';
 import '../models/deck.dart';
 import '../models/sorcery_card.dart';
@@ -88,6 +89,20 @@ class DeckEditorScreen extends StatelessWidget {
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: Text(s.close)),
+          OutlinedButton.icon(
+            icon: const Icon(Icons.save_alt),
+            label: Text(s.saveFile),
+            onPressed: () async {
+              final messenger = ScaffoldMessenger.of(context);
+              try {
+                if (await saveTextFile(safeFileName(deck.name, 'txt'), text)) {
+                  messenger.showSnackBar(SnackBar(content: Text(s.fileSaved)));
+                }
+              } catch (_) {
+                messenger.showSnackBar(SnackBar(content: Text(s.fileFailed)));
+              }
+            },
+          ),
           FilledButton.icon(
             icon: const Icon(Icons.copy),
             label: Text(s.copy),
