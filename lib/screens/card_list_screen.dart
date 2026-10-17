@@ -6,6 +6,7 @@ import '../models/sorcery_card.dart';
 import '../theme.dart';
 import '../widgets/card_art.dart';
 import 'card_detail_screen.dart';
+import 'scan_screen.dart';
 
 enum SortOrder { name, costAsc, costDesc }
 
@@ -83,6 +84,18 @@ class _CardListScreenState extends State<CardListScreen> {
       appBar: AppBar(
         title: Text(widget.title ?? 'Sorcery Companion'),
         actions: [
+          if (scannerAvailable && widget.keyword == null)
+            IconButton(
+              icon: const Icon(Icons.document_scanner_outlined),
+              tooltip: s.scan,
+              onPressed: () => Navigator.of(context)
+                  .push(
+                    MaterialPageRoute(
+                      builder: (_) => ScanScreen(db: widget.db, onPick: widget.onPick),
+                    ),
+                  )
+                  .then((_) => setState(() {})), // refresh copy badges after a pick
+            ),
           PopupMenuButton<SortOrder>(
             icon: const Icon(Icons.sort),
             tooltip: s.sort,

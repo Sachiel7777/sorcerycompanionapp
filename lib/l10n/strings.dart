@@ -232,6 +232,24 @@ class AppStrings {
   String get noCodexResults => _t('Nessuna voce trovata', 'No entries found');
   String get cardsWithKeyword => _t('Carte con questa parola chiave', 'Cards with this keyword');
 
+  // Scanner
+  String get scan => _t('Scansiona una carta', 'Scan a card');
+  String get scanTitle => _t('Scansiona', 'Scan');
+  String get scanHint => _t(
+    'Fotografa la carta dritta e con buona luce, in modo che il nome si legga bene. Il riconoscimento avviene sul telefono, senza internet.',
+    'Take the photo straight on and in good light, so the name is easy to read. Recognition runs on the phone, with no internet.',
+  );
+  String get takePhoto => _t('Scatta una foto', 'Take a photo');
+  String get takeAnother => _t('Scatta un\'altra foto', 'Take another photo');
+  String get fromGallery => _t('Dalla galleria', 'From gallery');
+  String get readingCard => _t('Leggo la carta…', 'Reading the card…');
+  String get scanMatches => _t('Carte trovate', 'Matching cards');
+  String get noScanMatch => _t(
+    'Non ho riconosciuto il nome. Prova con più luce o avvicinandoti alla carta.',
+    'Couldn\'t recognise the name. Try with more light or closer to the card.',
+  );
+  String get scanFailed => _t('Non sono riuscito a leggere la foto.', 'Couldn\'t read the photo.');
+
   static const _monthsIt = [
     'gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', //
     'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre',
