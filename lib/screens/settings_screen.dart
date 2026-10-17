@@ -5,7 +5,9 @@ import '../data/card_repository.dart';
 import '../data/settings.dart';
 import '../l10n/strings.dart';
 import '../theme.dart';
+import 'codex_screen.dart';
 import 'offline_screen.dart';
+import 'rules_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key, required this.db, required this.settings});
@@ -76,6 +78,23 @@ class SettingsScreen extends StatelessWidget {
                     onSelectionChanged: (v) => settings.themeMode = v.first,
                   ),
                 ),
+              ),
+            ]),
+            SectionTitle(s.rulesGroup),
+            group([
+              ListTile(
+                leading: const Icon(Icons.menu_book_outlined),
+                title: Text(s.rulesTitle),
+                subtitle: Text(s.rulesHint),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RulesScreen())),
+              ),
+              ListTile(
+                leading: const Icon(Icons.auto_stories_outlined),
+                title: Text(s.codexTitle),
+                subtitle: Text(s.codexHint),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => CodexScreen(db: db))),
               ),
             ]),
             SectionTitle(s.game),

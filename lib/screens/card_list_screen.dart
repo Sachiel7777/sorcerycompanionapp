@@ -17,6 +17,7 @@ class CardListScreen extends StatefulWidget {
     this.initialSets = const {},
     this.onPick,
     this.countOf,
+    this.keyword,
   });
 
   final CardDatabase db;
@@ -33,6 +34,9 @@ class CardListScreen extends StatefulWidget {
 
   /// Shown as a badge on each card, e.g. copies already in the deck.
   final int Function(SorceryCard card)? countOf;
+
+  /// When set, only cards with this keyword are listed.
+  final String? keyword;
 
   @override
   State<CardListScreen> createState() => _CardListScreenState();
@@ -51,6 +55,7 @@ class _CardListScreenState extends State<CardListScreen> {
   List<SorceryCard> get _visible {
     final q = _query.trim().toLowerCase();
     final result = widget.db.cards.where((c) {
+      if (widget.keyword != null && !c.keywords.contains(widget.keyword)) return false;
       if (q.isNotEmpty && !c.searchText.contains(q)) return false;
       if (_sets.isNotEmpty && !c.sets.any(_sets.contains)) return false;
       if (_types.isNotEmpty && !_types.contains(c.type)) return false;
