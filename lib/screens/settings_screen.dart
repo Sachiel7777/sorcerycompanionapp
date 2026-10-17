@@ -1,8 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../data/backup.dart';
 import '../data/card_repository.dart';
+import '../data/deck_store.dart';
 import '../data/settings.dart';
+import '../data/text_files.dart';
 import '../l10n/strings.dart';
 import '../theme.dart';
 import 'codex_screen.dart';
@@ -10,10 +13,47 @@ import 'offline_screen.dart';
 import 'rules_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key, required this.db, required this.settings});
+  const SettingsScreen({super.key, required this.db, required this.settings, required this.decks});
 
   final CardDatabase db;
   final AppSettings settings;
+  final DeckStore decks;
+
+  Future<void> _exportBackup(BuildContext context) async {
+    final s = context.s;
+    final messenger = ScaffoldMessenger.of(context);
+    final backup = Backup(decks: decks.decks, settings: settings.toBackup());
+    try {
+      if (await saveTextFile(backup.fileName, backup.toJson(), mimeType: 'application/json')) {
+        messenger.showSnackBar(SnackBar(content: Text(s.backupSaved)));
+      }
+    } catch (_) {
+      messenger.showSnackBar(SnackBar(content: Text(s.fileFailed)));
+    }
+  }
+
+  Future<void> _importBackup(BuildContext context) async {
+    final s = context.s;
+    final messenger = ScaffoldMessenger.of(context);
+    final String? text;
+    try {
+      text = await pickTextFile();
+    } catch (_) {
+      messenger.showSnackBar(SnackBar(content: Text(s.fileFailed)));
+      return;
+    }
+    if (text == null) return;
+    final Backup backup;
+    try {
+      backup = Backup.fromJson(text);
+    } on FormatException {
+      messenger.showSnackBar(SnackBar(content: Text(s.backupInvalid)));
+      return;
+    }
+    final result = decks.merge(backup.decks);
+    settings.restore(backup.settings);
+    messenger.showSnackBar(SnackBar(content: Text(s.backupImported(result.added, result.updated))));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -144,6 +184,21 @@ class SettingsScreen extends StatelessWidget {
                 ),
               ]),
             ],
+            SectionTitle(s.backupGroup),
+            group([
+              ListTile(
+                leading: const Icon(Icons.upload_file_outlined),
+                title: Text(s.exportBackup),
+                subtitle: Text(s.exportBackupHint),
+                onTap: () => _exportBackup(context),
+              ),
+              ListTile(
+                leading: const Icon(Icons.restore_page_outlined),
+                title: Text(s.importBackup),
+                subtitle: Text(s.importBackupHint),
+                onTap: () => _importBackup(context),
+              ),
+            ]),
             SectionTitle(s.about),
             group([
               ListTile(

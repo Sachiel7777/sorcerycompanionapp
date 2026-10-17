@@ -27,6 +27,30 @@ class AppSettings extends ChangeNotifier {
     notifyListeners();
   }
 
+  static const _backupKeys = ['themeMode', 'language', 'startingLife', 'keepScreenOn'];
+
+  /// The preferences worth carrying to another device.
+  Map<String, Object> toBackup() => {
+    for (final k in _backupKeys)
+      if (_prefs.get(k) case final Object v) k: v,
+  };
+
+  void restore(Map<String, Object> values) {
+    for (final MapEntry(:key, :value) in values.entries) {
+      if (!_backupKeys.contains(key)) continue;
+      if (key == 'themeMode' && !ThemeMode.values.any((m) => m.name == value)) continue;
+      switch (value) {
+        case String v:
+          _prefs.setString(key, v);
+        case bool v:
+          _prefs.setBool(key, v);
+        case num v:
+          _prefs.setInt(key, v.toInt());
+      }
+    }
+    notifyListeners();
+  }
+
   /// Life each player starts with on the Play screen.
   int get startingLife => _prefs.getInt('startingLife') ?? 20;
 
