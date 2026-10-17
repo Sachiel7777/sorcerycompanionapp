@@ -1,65 +1,65 @@
 # Sorcery Companion (app)
 
-App per Android (e in futuro Linux, Windows, macOS) ispirata a
-[sorcery-companion.com](https://www.sorcery-companion.com/). Scritta in Flutter:
-un solo codice produce l'app per tutte le piattaforme.
+An app for Android (and later Linux, Windows and macOS) inspired by
+[sorcery-companion.com](https://www.sorcery-companion.com/). It is written in Flutter, so one
+codebase builds the app for every platform.
 
-## Cosa fa adesso
+## What it does now
 
-- Lista di tutte le 1100 carte di Sorcery: Contested Realm, in griglia con le immagini.
-- Ricerca per nome, testo delle regole, sottotipi e parole chiave.
-- Filtri per espansione, tipo, elemento e rarità; ordinamento per nome o costo.
-- Scheda della carta: statistiche, testo, tutte le stampe (cliccando una stampa si vede la sua immagine).
-- Le immagini già viste restano in cache sul telefono.
-- **Set**: tutte le espansioni con numero di carte e data di uscita; toccandone una si aprono le sue carte.
-- **Mazzi**: mazzi salvati sul telefono (Avatar, Spellbook, Atlas, Collection), con controllo delle
-  regole del formato Constructed, curva di mana e soglie; importa ed esporta come lista di testo
-  ("4 Apprentice Wizard", una carta per riga).
-- **Partita**: contatore per due giocatori (vita, mana e soglie dei quattro elementi), con la metà
-  dell'avversario capovolta e lo schermo sempre acceso.
-- **Impostazioni**: lingua (italiano o inglese, o quella del telefono), tema chiaro/scuro, vita iniziale, schermo acceso, "Uso offline" per scaricare
-  tutte le immagini in una volta, crediti.
-- **Regole e glossario** (da Impostazioni): riassunto delle regole e glossario di parole chiave e termini,
-  in italiano e inglese, scritti per questa app (`lib/data/rules_content.dart`), con il link al regolamento
-  ufficiale. Le parole chiave nella scheda di una carta si toccano per leggerne il significato.
+- Lists all 1100 cards of Sorcery: Contested Realm in a grid with their images.
+- Search by name, rules text, subtypes and keywords.
+- Filters by set, type, element and rarity; sort by name or cost.
+- Card details: stats, text and every printing (tap a printing to see its image).
+- Images already seen stay cached on the device.
+- **Sets**: every expansion with its card count and release date; tap one to open its cards.
+- **Decks**: decks saved on the device (Avatar, Spellbook, Atlas, Collection), with Constructed
+  rules checks, mana curve and thresholds; import and export as a text list
+  ("4 Apprentice Wizard", one card per line).
+- **Play**: a two-player tracker (life, mana and the four elemental thresholds), with the
+  opponent's half upside down and the screen kept on.
+- **Settings**: language (Italian, English or the device's), light/dark theme, starting life,
+  keep screen on, "Offline use" to download every image at once, credits.
+- **Rules and glossary** (from Settings): a rules summary and a glossary of keywords and game
+  terms, in Italian and English, written for this app (`lib/data/rules_content.dart`), with a link
+  to the official rulebook. Keywords on a card's page can be tapped to read what they mean.
 
-## Da dove vengono i dati
+## Where the data comes from
 
-- Le carte vengono dall'API ufficiale (`api.sorcerytcg.com`), che chiede di non usarla come
-  backend live ma di scaricare i dati e ospitarli da sé.
-- Usiamo l'esportazione di [Kairos Archive](https://github.com/sadkinglabs/sorcery-registry)
-  (`export/registry.json`), che ripubblica gli stessi dati con ID stabili e ospita le immagini
-  su `api.kairosarchive.net` (hotlink consentito, con credito a Erik's Curiosa).
-- `tool/build_cards.py` riduce l'esportazione a `assets/data/cards.json`, incluso nell'app.
+- Cards come from the official API (`api.sorcerytcg.com`), which asks not to be used as a live
+  backend but to download the data and host it yourself.
+- We use the [Kairos Archive](https://github.com/sadkinglabs/sorcery-registry) export
+  (`export/registry.json`), which republishes the same data with stable IDs and hosts the images
+  on `api.kairosarchive.net` (hotlinking allowed, crediting Erik's Curiosa).
+- `tool/build_cards.py` trims the export down to `assets/data/cards.json`, bundled in the app.
 
-Nomi, testi e immagini delle carte sono © Erik's Curiosa. I testi delle carte restano in inglese,
-l'unica lingua in cui sono pubblicati. Il carattere dei titoli è Cinzel (SIL Open Font License,
+Card names, texts and images are © Erik's Curiosa. Card texts stay in English, the only language
+they are published in. The title font is Cinzel (SIL Open Font License,
 `assets/fonts/Cinzel-OFL.txt`).
 
-I testi dell'app sono in `lib/l10n/strings.dart`.
+App texts live in `lib/l10n/strings.dart`.
 
-## Aggiornare le carte
+## Updating the cards
 
 ```sh
 curl -L -o registry.json https://raw.githubusercontent.com/sadkinglabs/sorcery-registry/main/export/registry.json
 python3 tool/build_cards.py registry.json
 ```
 
-## Compilare
+## Building
 
 ```sh
 flutter pub get
-flutter run              # sul dispositivo collegato
+flutter run              # on the connected device
 flutter build apk        # Android
 flutter build linux      # / windows / macos / web
 ```
 
-## Scaricare l'APK
+## Downloading the APK
 
-A ogni modifica su `main`, GitHub Actions compila l'APK: apri la scheda **Actions**, scegli
-l'ultima esecuzione di **Build** e scarica `sorcery-companion-apk` in fondo alla pagina.
+On every change to `main`, GitHub Actions builds the APK: open the **Actions** tab, pick the
+latest **Build** run and download `sorcery-companion-apk` at the bottom of the page.
 
-## Prossimi passi
+## Next steps
 
-1. Aggiornamento automatico della lista carte quando esce una nuova versione dell'archivio.
-2. Scanner delle carte con la fotocamera (come sul sito).
+1. Update the card list automatically when a new archive version comes out.
+2. Card scanner with the camera (as on the website).
