@@ -118,7 +118,3 @@ flutter build linux      # / windows / macos / web
 
 On every change to `main`, GitHub Actions builds the APK: open the **Actions** tab, pick the
 latest **Build** run and download `sorcery-companion-apk` at the bottom of the page.
-
-## Next steps
-
-1. Update the card list automatically when a new archive version comes out.
