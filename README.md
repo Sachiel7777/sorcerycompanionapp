@@ -50,6 +50,32 @@ they are published in. The title font is Cinzel (SIL Open Font License,
 
 App texts live in `lib/l10n/strings.dart`.
 
+## About this app / Informazioni sull'app
+
+### English
+
+- **Made with AI.** This app was created with AI (Claude Code). I have no coding experience, so
+  every suggestion, tip or correction is very welcome: please open an issue or a pull request.
+- **No telemetry, no data collection.** The app has no analytics, crash reporting or advertising,
+  and it collects no data of any kind.
+- **Permissions.** It only needs access to the internet (to download card images) and, optionally,
+  the camera (only when you open the card scanner; the gallery option works without it). It does
+  not need access to your storage: the card data lives inside the app's own private space.
+- **Open source.** The code is open and available here, under the license below.
+
+### Italiano
+
+- **Creata con l'IA.** Questa app è stata creata con l'intelligenza artificiale (Claude Code).
+  Non ho esperienza di programmazione, quindi ogni suggerimento, consiglio o correzione è ben
+  accetto: apri pure una issue o una pull request.
+- **Nessuna telemetria, nessuna raccolta di dati.** L'app non contiene strumenti di analisi,
+  segnalazione degli errori o pubblicità e non raccoglie dati di alcun tipo.
+- **Permessi.** Ha bisogno solo dell'accesso a Internet (per scaricare le immagini delle carte)
+  e, in modo facoltativo, della fotocamera (solo quando apri lo scanner delle carte; la scelta
+  dalla galleria funziona anche senza). Non richiede l'accesso all'archiviazione: i dati delle
+  carte restano nello spazio interno e privato dell'app.
+- **Codice aperto.** Il codice è aperto e disponibile qui, con la licenza indicata sotto.
+
 ## License
 
 The app's code is free software under the [GNU General Public License v3.0](LICENSE) or, at your
