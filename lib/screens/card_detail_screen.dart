@@ -87,7 +87,7 @@ class _CardDetailScreenState extends State<CardDetailScreen> {
               OutlinedButton.icon(
                 icon: const Icon(Icons.open_in_new, size: 18),
                 label: Text(link.label),
-                onPressed: () => link.open(card.name),
+                onPressed: () => link.open(context, card.name),
               ),
           ],
         ),

@@ -1,4 +1,6 @@
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/widgets.dart';
+
+import '../screens/web_screen.dart';
 
 /// Shops where a card's market price can be looked up. The app shows no
 /// prices itself: TCGplayer's terms don't allow reusing its price data.
@@ -10,8 +12,8 @@ class PriceLink {
 
   Uri uriFor(String cardName) => Uri.parse(_url(Uri.encodeQueryComponent(cardName)));
 
-  Future<bool> open(String cardName) =>
-      launchUrl(uriFor(cardName), mode: LaunchMode.externalApplication);
+  /// Opens the search in the in-app browser.
+  Future<void> open(BuildContext context, String cardName) => openInApp(context, uriFor(cardName));
 }
 
 final priceLinks = [

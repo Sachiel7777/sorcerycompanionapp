@@ -154,6 +154,8 @@ class AppStrings {
       _t('Il mazzo verrà cancellato dal dispositivo.', 'The deck will be removed from this device.');
   String get exportDeck => _t('Esporta come testo', 'Export as text');
   String get copy => _t('Copia', 'Copy');
+  String get reload => _t('Ricarica', 'Reload');
+  String get openInBrowser => _t('Apri nel browser', 'Open in browser');
   String get close => _t('Chiudi', 'Close');
   String get copied => _t('Lista copiata negli appunti', 'List copied to the clipboard');
   String get importHint => _t(
