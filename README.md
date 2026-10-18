@@ -87,6 +87,11 @@ option, any later version. This covers the code only, not the card names, texts 
 (see above), which stay © Erik's Curiosa. The card scanner bundles Tesseract OCR and its English
 model, both Apache License 2.0 (`assets/licenses/tesseract-apache-2.0.txt`).
 
+### Copyright and takedown requests
+
+If you believe this software infringes any copyright or violates any law, please contact the author.
+Upon verification, the infringing material will be promptly removed.
+
 ## Updating the cards
 
 ```sh
