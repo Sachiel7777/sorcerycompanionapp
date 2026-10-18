@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sorcery_companion/data/backup.dart';
+import 'package:sorcery_companion/data/collection_store.dart';
 import 'package:sorcery_companion/data/deck_store.dart';
 import 'package:sorcery_companion/data/settings.dart';
 import 'package:sorcery_companion/data/text_files.dart';
@@ -55,5 +56,20 @@ void main() {
   test('file names are safe', () {
     expect(safeFileName('Fuoco: v2/finale?', 'txt'), 'Fuoco v2finale.txt');
     expect(safeFileName('  ', 'txt'), 'deck.txt');
+  });
+
+  test('collections travel in the backup and the newer copy wins', () async {
+    final mine = CardCollection(id: 'c1', name: 'Binder', copies: {'P000001': 2}, updated: DateTime(2026, 10, 1));
+    final back = Backup.fromJson(Backup(decks: const [], collections: [mine]).toJson());
+    expect(back.collections.single.name, 'Binder');
+    expect(back.collections.single.copies, {'P000001': 2});
+    expect(Backup.fromJson('{"app": "sorcery-companion", "version": 1}').collections, isEmpty);
+
+    SharedPreferences.setMockInitialValues({});
+    final store = await CollectionStore.load();
+    final local = store.create('Local');
+    final older = CardCollection(id: local.id, name: 'Old', updated: local.updated.subtract(const Duration(days: 1)));
+    expect(store.merge([older, back.collections.single]), (added: 1, updated: 0));
+    expect(store.collections.map((c) => c.name), ['Local', 'Binder']);
   });
 }

@@ -7,6 +7,7 @@ import '../theme.dart';
 import '../widgets/card_art.dart';
 import 'card_detail_screen.dart';
 import 'scan_screen.dart';
+import 'collections_screen.dart';
 
 enum SortOrder { name, costAsc, costDesc }
 
@@ -95,6 +96,14 @@ class _CardListScreenState extends State<CardListScreen> {
                     ),
                   )
                   .then((_) => setState(() {})), // refresh copy badges after a pick
+            ),
+          if (widget.onPick == null && widget.keyword == null)
+            IconButton(
+              icon: const Icon(Icons.inventory_2_outlined),
+              tooltip: s.collectionsTitle,
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => CollectionsScreen(db: widget.db)),
+              ),
             ),
           PopupMenuButton<SortOrder>(
             icon: const Icon(Icons.sort),

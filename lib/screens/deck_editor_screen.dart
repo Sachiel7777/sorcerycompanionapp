@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../data/card_repository.dart';
+import '../data/collection_store.dart';
 import '../data/deck_rules.dart';
 import '../data/deck_store.dart';
 import '../data/deck_text.dart';
@@ -13,6 +14,7 @@ import '../theme.dart';
 import '../widgets/card_art.dart';
 import 'card_detail_screen.dart';
 import 'card_list_screen.dart';
+import 'collections_screen.dart';
 import 'decks_screen.dart';
 
 class DeckEditorScreen extends StatelessWidget {
@@ -47,6 +49,49 @@ class DeckEditorScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// Puts every card of the deck into a collection the user picks
+  /// (or creates on the spot).
+  Future<void> _addToCollection(BuildContext context) async {
+    final s = context.s;
+    final collections = CollectionScope.of(context);
+    final copies = DeckSection.values.fold(0, (n, section) => n + deck.count(section));
+    const createNew = Object();
+    final picked = await showDialog<Object>(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: Text(s.addDeckToCollection),
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+            child: Text(s.addDeckToCollectionText(copies)),
+          ),
+          for (final c in collections.collections)
+            SimpleDialogOption(
+              onPressed: () => Navigator.pop(context, c),
+              child: ListTile(
+                leading: const Icon(Icons.inventory_2_outlined),
+                title: Text(c.name),
+                subtitle: Text(s.copyCount(c.totalCopies)),
+              ),
+            ),
+          SimpleDialogOption(
+            onPressed: () => Navigator.pop(context, createNew),
+            child: ListTile(leading: const Icon(Icons.add), title: Text(s.newCollection)),
+          ),
+        ],
+      ),
+    );
+    if (picked == null || !context.mounted) return;
+    var collection = picked is CardCollection ? picked : null;
+    if (collection == null) {
+      final name = await askCollectionName(context);
+      if (name == null || !context.mounted) return;
+      collection = collections.create(name);
+    }
+    final added = collections.addDeck(collection, deck, db);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(s.deckAddedToCollection(added, collection.name))));
   }
 
   Future<void> _rename(BuildContext context) async {
@@ -129,8 +174,14 @@ class DeckEditorScreen extends StatelessWidget {
           actions: [
             IconButton(icon: const Icon(Icons.ios_share), tooltip: s.exportDeck, onPressed: () => _export(context)),
             PopupMenuButton<String>(
-              onSelected: (v) => v == 'rename' ? _rename(context) : _delete(context),
+              onSelected: (v) => switch (v) {
+                'collection' => _addToCollection(context),
+                'rename' => _rename(context),
+                _ => _delete(context),
+              },
               itemBuilder: (_) => [
+                if (DeckSection.values.any((section) => deck.count(section) > 0))
+                  PopupMenuItem(value: 'collection', child: Text(s.addDeckToCollection)),
                 PopupMenuItem(value: 'rename', child: Text(s.rename)),
                 PopupMenuItem(value: 'delete', child: Text(s.delete)),
               ],
