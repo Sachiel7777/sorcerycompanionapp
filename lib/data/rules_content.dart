@@ -15,6 +15,26 @@ class Bilingual {
 
 const officialCodexUrl = 'https://sorcerytcg.com/codex';
 const officialChangelogUrl = 'https://sorcerytcg.com/codex/changelog';
+
+/// Page of a card on the official site, e.g. `Mariner's Curse` becomes
+/// `https://sorcerytcg.com/cards/mariners_curse`. The slug matches the one
+/// the Kairos Archive uses inside its printing slugs for every card.
+String officialCardUrl(String cardName) {
+  const accents = {
+    'à': 'a', 'á': 'a', 'â': 'a', 'ä': 'a', 'å': 'a', 'ç': 'c', 'è': 'e', 'é': 'e', 'ê': 'e', 'ë': 'e',
+    'ì': 'i', 'í': 'i', 'î': 'i', 'ï': 'i', 'ñ': 'n', 'ò': 'o', 'ó': 'o', 'ô': 'o', 'ö': 'o',
+    'ù': 'u', 'ú': 'u', 'û': 'u', 'ü': 'u', 'ý': 'y', 'ÿ': 'y',
+  };
+  final slug = cardName
+      .toLowerCase()
+      .split('')
+      .map((c) => accents[c] ?? c)
+      .join()
+      .replaceAll(RegExp("['’]"), '')
+      .replaceAll(RegExp('[^a-z0-9]+'), '_')
+      .replaceAll(RegExp(r'^_+|_+$'), '');
+  return 'https://sorcerytcg.com/cards/$slug';
+}
 const officialRulebookUrl = 'https://drive.google.com/file/d/1sgQo0xf0N2teIR0zlyl91g9j6LVncZnr/view';
 
 class RulesSection {

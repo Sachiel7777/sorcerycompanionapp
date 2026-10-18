@@ -9,6 +9,7 @@ import '../l10n/strings.dart';
 import '../theme.dart';
 import 'codex_screen.dart';
 import 'collections_screen.dart';
+import 'rules_screen.dart' show openLink;
 
 class CardDetailScreen extends StatefulWidget {
   const CardDetailScreen({super.key, required this.card});
@@ -76,6 +77,12 @@ class _CardDetailScreenState extends State<CardDetailScreen> {
           const SizedBox(height: 12),
           Text(printing!.flavour!, style: text.bodyMedium?.copyWith(fontStyle: FontStyle.italic)),
         ],
+        const SizedBox(height: 16),
+        OutlinedButton.icon(
+          icon: const Icon(Icons.open_in_new, size: 18),
+          label: Text(s.viewOnOfficialSite),
+          onPressed: () => openLink(context, officialCardUrl(card.name)),
+        ),
         const SizedBox(height: 24),
         SectionTitle(s.marketPrices, padding: EdgeInsets.zero),
         const SizedBox(height: 8),

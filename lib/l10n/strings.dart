@@ -224,6 +224,7 @@ class AppStrings {
     'A summary written for this app. When in doubt, the official rulebook decides.',
   );
   String get officialRulebook => _t('Regolamento ufficiale (PDF)', 'Official rulebook (PDF)');
+  String get viewOnOfficialSite => _t('Vedi sul sito ufficiale', 'View on the official site');
   String get officialCodex => _t('Codex ufficiale', 'Official Codex');
   String get officialCodexHint => _t('Regole e FAQ sul sito di Sorcery', 'Rules and FAQ on the Sorcery website');
   String get officialChangelog => _t('Changelog del Codex', 'Codex changelog');
