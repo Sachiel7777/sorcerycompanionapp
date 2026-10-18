@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Parchment and bronze by day, ink and gold by night, with Cinzel
+/// Mist and indigo by day, midnight and lavender by night, with Cinzel
 /// (a typeface cut from Roman inscriptions) for titles.
 const _titleFont = 'Cinzel';
 
@@ -21,32 +21,32 @@ const elementIcons = {
 
 ThemeData buildTheme(Brightness brightness) {
   final dark = brightness == Brightness.dark;
-  final base = ColorScheme.fromSeed(seedColor: const Color(0xFF8C6A3F), brightness: brightness);
+  final base = ColorScheme.fromSeed(seedColor: const Color(0xFF4B49B8), brightness: brightness);
   final scheme = dark
       ? base.copyWith(
-          primary: const Color(0xFFDDB673),
-          onPrimary: const Color(0xFF2B1D07),
-          primaryContainer: const Color(0xFF4A3818),
-          onPrimaryContainer: const Color(0xFFF6E2B8),
-          surface: const Color(0xFF15120E),
-          surfaceContainerLowest: const Color(0xFF100D0A),
-          surfaceContainerLow: const Color(0xFF1B1712),
-          surfaceContainer: const Color(0xFF211C16),
-          surfaceContainerHigh: const Color(0xFF2A241C),
-          surfaceContainerHighest: const Color(0xFF342C22),
-          outlineVariant: const Color(0xFF4A4034),
+          primary: const Color(0xFFB7B9FF),
+          onPrimary: const Color(0xFF15174D),
+          primaryContainer: const Color(0xFF2D2F78),
+          onPrimaryContainer: const Color(0xFFE1E1FF),
+          surface: const Color(0xFF0E1020),
+          surfaceContainerLowest: const Color(0xFF0A0B18),
+          surfaceContainerLow: const Color(0xFF13162A),
+          surfaceContainer: const Color(0xFF191C34),
+          surfaceContainerHigh: const Color(0xFF22263F),
+          surfaceContainerHighest: const Color(0xFF2D314C),
+          outlineVariant: const Color(0xFF3F4466),
         )
       : base.copyWith(
-          primary: const Color(0xFF7A5321),
-          primaryContainer: const Color(0xFFF1DDB5),
-          onPrimaryContainer: const Color(0xFF3A2708),
-          surface: const Color(0xFFF7F0E3),
-          surfaceContainerLowest: const Color(0xFFFFFBF4),
-          surfaceContainerLow: const Color(0xFFF3EADA),
-          surfaceContainer: const Color(0xFFEFE4D1),
-          surfaceContainerHigh: const Color(0xFFE9DCC6),
-          surfaceContainerHighest: const Color(0xFFE2D3BA),
-          outlineVariant: const Color(0xFFD5C3A5),
+          primary: const Color(0xFF3B3AA0),
+          primaryContainer: const Color(0xFFDEDFFF),
+          onPrimaryContainer: const Color(0xFF13145C),
+          surface: const Color(0xFFF4F5FB),
+          surfaceContainerLowest: const Color(0xFFFFFFFF),
+          surfaceContainerLow: const Color(0xFFEDEFF8),
+          surfaceContainer: const Color(0xFFE6E8F4),
+          surfaceContainerHigh: const Color(0xFFDEE1F0),
+          surfaceContainerHighest: const Color(0xFFD5D9EB),
+          outlineVariant: const Color(0xFFC2C7E0),
         );
 
   final textTheme = ThemeData(brightness: brightness).textTheme;
