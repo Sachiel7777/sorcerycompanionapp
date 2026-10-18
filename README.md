@@ -95,7 +95,8 @@ Upon verification, the infringing material will be promptly removed.
 ## Updating the cards
 
 A scheduled workflow (`.github/workflows/update-cards.yml`, Mondays 06:17 UTC) checks the
-registry for a new release tag, rebuilds the list and opens a pull request if it changed.
+registry for a new release tag, rebuilds the list and opens a pull request if it changed;
+if the Build workflow passes on that branch, the PR is merged and a release is published.
 The release currently bundled is recorded in `tool/registry-version.txt`. To do it by hand:
 
 ```sh

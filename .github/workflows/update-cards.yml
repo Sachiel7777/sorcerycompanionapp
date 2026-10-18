@@ -4,8 +4,11 @@ name: Update card list
 # (https://github.com/sadkinglabs/sorcery-registry). A release is a git tag
 # vX.Y.Z; its export/registry.json is immutable. The tag last used is recorded
 # in tool/registry-version.txt. When a newer tag exists, the card list is
-# rebuilt and, only if it changed, a pull request is opened or updated.
-# Nothing is merged or released automatically.
+# rebuilt and, only if it changed, a pull request is opened or updated. The
+# Build workflow is then run on the PR branch; only if it passes (and the PR
+# touches nothing but the card list) is the PR merged, and Build is run on main
+# to publish the release. (Events created with GITHUB_TOKEN do not start other
+# workflows, except workflow_dispatch, which is why Build is dispatched here.)
 
 on:
   schedule:
@@ -15,6 +18,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  actions: write
 
 concurrency:
   group: update-cards
@@ -87,10 +91,48 @@ jobs:
           \`assets/data/cards.json\` was rebuilt with \`tool/build_cards.py\` from
           https://github.com/$REGISTRY_REPO/releases/tag/$TAG
 
-          Review the diff, run the Build workflow, then merge manually. Nothing is released automatically."
+          The Build workflow is run on this branch; if it passes, this PR is merged automatically and a release is published."
           number=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number')
           if [ -n "$number" ]; then
             gh pr edit "$number" --title "$title" --body "$body"
           else
             gh pr create --head "$BRANCH" --base "${{ github.event.repository.default_branch }}" --title "$title" --body "$body"
           fi
+          echo "branch_sha=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: Build the PR branch, then merge it if the build passes
+        if: steps.latest.outputs.new == 'true' && env.branch_sha != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.latest.outputs.latest }}
+        run: |
+          # Only the card list and its version marker may change.
+          number=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number')
+          files=$(gh pr diff "$number" --name-only | sort | tr '\n' ' ')
+          if [ "$files" != "assets/data/cards.json tool/registry-version.txt " ]; then
+            echo "::error::PR #$number changes unexpected files ($files); not merging automatically."
+            exit 1
+          fi
+
+          gh workflow run build.yml --ref "$BRANCH"
+          run_id=""
+          for i in $(seq 1 30); do
+            run_id=$(gh run list --workflow build.yml --branch "$BRANCH" --event workflow_dispatch \
+              --json databaseId,headSha --jq "[.[] | select(.headSha == \"$branch_sha\")][0].databaseId // empty")
+            [ -n "$run_id" ] && break
+            sleep 10
+          done
+          if [ -z "$run_id" ]; then
+            echo "::error::Build run for $branch_sha did not start."
+            exit 1
+          fi
+          gh run watch "$run_id" --exit-status || {
+            echo "::error::Build failed; PR #$number stays open for review."
+            exit 1
+          }
+
+          gh pr merge "$number" --squash --delete-branch \
+            --subject "Update card list to Kairos Archive $TAG (#$number)"
+          # A merge made with GITHUB_TOKEN does not trigger Build's push event,
+          # so run it on main; its release job publishes the APK.
+          gh workflow run build.yml --ref "${{ github.event.repository.default_branch }}"
