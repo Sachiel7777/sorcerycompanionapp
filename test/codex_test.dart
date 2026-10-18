@@ -10,6 +10,21 @@ import 'package:sorcery_companion/screens/rules_screen.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  test('official card page addresses follow the verified pattern', () async {
+    const base = 'https://sorcerytcg.com/cards/';
+    expect(officialCardUrl('Chaoswish'), '${base}chaoswish');
+    expect(officialCardUrl('Apprentice Wizard'), '${base}apprentice_wizard');
+    expect(officialCardUrl("Mariner's Curse"), '${base}mariners_curse');
+    expect(officialCardUrl('East-West Dragon'), '${base}east_west_dragon');
+    expect(officialCardUrl('Brocéliande'), '${base}broceliande');
+    expect(officialCardUrl('Fire Harpoons!'), '${base}fire_harpoons');
+    expect(officialCardUrl("Wills-o'-the-Wisp"), '${base}wills_o_the_wisp');
+    final db = await CardDatabase.loadBundled();
+    for (final c in db.cards) {
+      expect(officialCardUrl(c.name), matches(RegExp('^${RegExp.escape(base)}[a-z0-9]+(_[a-z0-9]+)*\$')), reason: c.name);
+    }
+  });
+
   test('every keyword in the card data has a glossary entry', () async {
     final db = await CardDatabase.loadBundled();
     final keywords = {for (final c in db.cards) ...c.keywords};
