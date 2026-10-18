@@ -61,6 +61,8 @@ App texts live in `lib/l10n/strings.dart`.
 - **Permissions.** It only needs access to the internet (to download card images) and, optionally,
   the camera (only when you open the card scanner; the gallery option works without it). It does
   not need access to your storage: the card data lives inside the app's own private space.
+  Downloading images contacts the image server (`api.kairosarchive.net`), which, like any web
+  server, can see your IP address; the app itself sends no other data anywhere.
 - **Open source.** The code is open and available here, under the license below.
 
 ### Italiano
@@ -74,6 +76,8 @@ App texts live in `lib/l10n/strings.dart`.
   e, in modo facoltativo, della fotocamera (solo quando apri lo scanner delle carte; la scelta
   dalla galleria funziona anche senza). Non richiede l'accesso all'archiviazione: i dati delle
   carte restano nello spazio interno e privato dell'app.
+  Il download delle immagini contatta il server delle immagini (`api.kairosarchive.net`), che,
+  come ogni server web, può vedere il tuo indirizzo IP; l'app di per sé non invia altri dati.
 - **Codice aperto.** Il codice è aperto e disponibile qui, con la licenza indicata sotto.
 
 ## License
