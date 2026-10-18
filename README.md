@@ -9,6 +9,10 @@ codebase builds the app for every platform.
 Tap the icon to download the APK of a release and install it on Android (you may have to allow
 installing apps from your browser). The list is refreshed automatically on every new release.
 
+> **Heads-up:** this is a new app that is not on Google Play, so while installing it Google Play
+> Protect may show a warning such as "App blocked" or "Unknown app". The APK is built by this
+> repository's GitHub Actions. To go on, tap **More details** (if shown), then **Install anyway**.
+
 <!-- releases:start -->
 | | Release | Date | Download |
 |---|---|---|---|
