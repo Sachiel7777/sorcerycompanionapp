@@ -4,6 +4,17 @@ An app for Android (and later Linux, Windows and macOS) inspired by
 [sorcery-companion.com](https://www.sorcery-companion.com/). It is written in Flutter, so one
 codebase builds the app for every platform.
 
+## Download
+
+Tap the icon to download the APK of a release and install it on Android (you may have to allow
+installing apps from your browser). The list is refreshed automatically on every new release.
+
+<!-- releases:start -->
+| | Release | Date | Download |
+|---|---|---|---|
+| [<img src="android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" width="40" alt="APK">](https://x/d/42.apk) | [**Sorcery Companion 1.0.0 (build 42)**](https://x/r/42) | 2026-10-18 | [sorcery-companion.apk](https://x/d/42.apk) |
+<!-- releases:end -->
+
 ## What it does now
 
 - Lists all 1100 cards of Sorcery: Contested Realm in a grid with their images.
@@ -116,5 +127,6 @@ flutter build linux      # / windows / macos / web
 
 ## Downloading the APK
 
-On every change to `main`, GitHub Actions builds the APK: open the **Actions** tab, pick the
-latest **Build** run and download `sorcery-companion-apk` at the bottom of the page.
+Every change to `main` is built by GitHub Actions and published as a release; the APKs are listed
+in the **Download** section at the top of this page and in the **Releases** tab. The same APK is also
+attached to each **Build** run in the **Actions** tab (`sorcery-companion-apk`).
