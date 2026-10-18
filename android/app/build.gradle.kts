@@ -1,8 +1,21 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
+
+// Release signing key. CI writes android/key.properties from repository
+// secrets; locally it can be created by hand (it is git-ignored). Without it
+// the release build falls back to the debug key, which changes on every CI
+// runner, so updates won't install over each other and Play Protect is more
+// likely to flag the APK.
+val keystoreProperties = Properties().apply {
+    val file = rootProject.file("key.properties")
+    if (file.exists()) file.inputStream().use { load(it) }
+}
+val hasReleaseKey = keystoreProperties.getProperty("storeFile") != null
 
 android {
     namespace = "com.sorcerycompanion.sorcery_companion"
@@ -15,8 +28,9 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.sorcerycompanion.sorcery_companion"
+        // Under the maintainer's own namespace rather than the sorcery-companion.com
+        // domain, which belongs to a different project.
+        applicationId = "io.github.sachiel7777.sorcerycompanion"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -29,13 +43,34 @@ android {
         versionName = flutter.versionName
     }
 
-    buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+    signingConfigs {
+        if (hasReleaseKey) {
+            create("release") {
+                storeFile = file(keystoreProperties.getProperty("storeFile"))
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            }
         }
     }
+
+    // Google's signed dependency list inside the APK is not open source, and
+    // F-Droid refuses APKs that carry it.
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
+    }
+
+    buildTypes {
+        release {
+            signingConfig = signingConfigs.getByName(if (hasReleaseKey) "release" else "debug")
+        }
+    }
+}
+
+dependencies {
+    // Tesseract OCR (Apache 2.0) for the card scanner; published on JitPack.
+    implementation("cz.adaptech.tesseract4android:tesseract4android:4.9.0")
 }
 
 kotlin {

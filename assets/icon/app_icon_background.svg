@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<defs>
+ <radialGradient id="ink" cx="50%" cy="42%" r="70%"><stop offset="0" stop-color="#3A3024"/><stop offset=".6" stop-color="#1B1712"/><stop offset="1" stop-color="#0C0A08"/></radialGradient>
+ <radialGradient id="parch" cx="50%" cy="40%" r="75%"><stop offset="0" stop-color="#FFFBF4"/><stop offset=".7" stop-color="#EFE4D1"/><stop offset="1" stop-color="#D5C3A5"/></radialGradient>
+ <radialGradient id="night" cx="50%" cy="45%" r="70%"><stop offset="0" stop-color="#1E2A3A"/><stop offset=".7" stop-color="#121822"/><stop offset="1" stop-color="#0A0D12"/></radialGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6E2B8"/><stop offset=".45" stop-color="#DDB673"/><stop offset="1" stop-color="#9C7434"/></linearGradient>
+ <linearGradient id="bronzeLine" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9C7434"/><stop offset="1" stop-color="#5A3C14"/></linearGradient>
+ <radialGradient id="glow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#DDB673" stop-opacity=".28"/><stop offset="1" stop-color="#DDB673" stop-opacity="0"/></radialGradient>
+</defs>
+<rect width="512" height="512" fill="url(#ink)"/><circle cx="256" cy="256" r="170" fill="url(#glow)"/>
+</svg>

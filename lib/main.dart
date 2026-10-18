@@ -14,6 +14,10 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   LicenseRegistry.addLicense(() async* {
     yield LicenseEntryWithLineBreaks(['Cinzel'], await rootBundle.loadString('assets/fonts/Cinzel-OFL.txt'));
+    yield LicenseEntryWithLineBreaks(
+      ['Tesseract OCR, Tesseract4Android and the English model (tessdata_fast)'],
+      await rootBundle.loadString('assets/licenses/tesseract-apache-2.0.txt'),
+    );
   });
   final settings = await AppSettings.load();
   final decks = await DeckStore.load();

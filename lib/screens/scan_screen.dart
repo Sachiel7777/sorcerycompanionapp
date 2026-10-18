@@ -2,21 +2,20 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../data/card_matcher.dart';
 import '../data/card_repository.dart';
+import '../data/ocr.dart';
 import '../l10n/strings.dart';
 import '../models/sorcery_card.dart';
 import '../theme.dart';
 import '../widgets/card_art.dart';
 import 'card_detail_screen.dart';
 
-/// Text recognition runs on the phone (ML Kit), so scanning is only offered
-/// on Android and iOS.
-bool get scannerAvailable =>
-    !kIsWeb && (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS);
+/// Text recognition (Tesseract) runs on the phone through Android code, so
+/// scanning is only offered on Android.
+bool get scannerAvailable => !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
 
 /// Takes a photo of a card, reads its text and lists the cards whose name
 /// matches best. Works offline: nothing leaves the device.
@@ -61,19 +60,13 @@ class _ScanScreenState extends State<ScanScreen> {
       _matches = null;
       _error = null;
     });
-    final recognizer = TextRecognizer(script: TextRecognitionScript.latin);
     try {
-      final text = await recognizer.processImage(InputImage.fromFilePath(file.path));
-      final lines = [
-        for (final block in text.blocks)
-          for (final line in block.lines) ScannedLine(line.text, height: line.boundingBox.shortestSide),
-      ];
+      final lines = await readTextLines(file.path);
       final matches = await compute(_match, (lines: lines, cards: widget.db.cards));
       if (mounted) setState(() => _matches = matches);
     } catch (e) {
       if (mounted) setState(() => _error = '$e');
     } finally {
-      await recognizer.close();
       if (mounted) setState(() => _reading = false);
     }
   }
