@@ -119,9 +119,11 @@ class AppStrings {
   // Offline images
   String get offlineIntro => _t(
     'L\'elenco delle carte è già nell\'app. Scarica anche le immagini per '
-        'sfogliarle senza connessione (circa 2200 file, conviene usare il Wi-Fi).',
+        'sfogliarle senza connessione (circa 2200 file, conviene usare il Wi-Fi). '
+        'Le immagini restano nello spazio privato dell\'app: non serve alcun permesso di archiviazione.',
     'The card list is already in the app. Download the images too to browse '
-        'without a connection (about 2200 files, Wi-Fi recommended).',
+        'without a connection (about 2200 files, Wi-Fi recommended). '
+        'Images stay in the app\'s private space: no storage permission is needed.',
   );
   String get offlineDone =>
       _t('Fatto: tutte le immagini sono sul dispositivo.', 'Done: every image is on this device.');
@@ -248,6 +250,11 @@ class AppStrings {
     'Non ho riconosciuto il nome. Prova con più luce o avvicinandoti alla carta.',
     'Couldn\'t recognise the name. Try with more light or closer to the card.',
   );
+  String get cameraDenied => _t(
+    'Senza il permesso della fotocamera non posso scattare qui: puoi comunque usare "Dalla galleria".',
+    'Without camera permission I can\'t take photos here, but "From gallery" still works.',
+  );
+  String get openSettings => _t('Impostazioni', 'Settings');
   String get scanFailed => _t('Non sono riuscito a leggere la foto.', 'Couldn\'t read the photo.');
 
   // Backup and files

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../data/card_matcher.dart';
 import '../data/card_repository.dart';
@@ -37,6 +38,8 @@ class _ScanScreenState extends State<ScanScreen> {
   bool _reading = false;
   List<CardMatch>? _matches;
   String? _error;
+  bool _cameraDenied = false;
+  bool _cameraBlocked = false;
 
   @override
   void initState() {
@@ -45,7 +48,22 @@ class _ScanScreenState extends State<ScanScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _scan(ImageSource.camera));
   }
 
+  /// Asks for the camera only now that the user wants it. Returns false if
+  /// refused; the gallery stays available either way.
+  Future<bool> _ensureCamera() async {
+    if (!scannerAvailable) return true;
+    var status = await Permission.camera.status;
+    if (!status.isGranted && !status.isPermanentlyDenied) status = await Permission.camera.request();
+    if (!mounted) return false;
+    setState(() {
+      _cameraDenied = !status.isGranted;
+      _cameraBlocked = status.isPermanentlyDenied;
+    });
+    return status.isGranted;
+  }
+
   Future<void> _scan(ImageSource source) async {
+    if (source == ImageSource.camera && !await _ensureCamera()) return;
     final XFile? file;
     try {
       file = await _picker.pickImage(source: source, maxWidth: 2000, maxHeight: 2000);
@@ -117,6 +135,16 @@ class _ScanScreenState extends State<ScanScreen> {
               ],
             ),
           ),
+          if (_cameraDenied)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+              child: Row(
+                children: [
+                  Expanded(child: Text(s.cameraDenied, style: text.bodyMedium)),
+                  if (_cameraBlocked) TextButton(onPressed: openAppSettings, child: Text(s.openSettings)),
+                ],
+              ),
+            ),
           if (_photo != null)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
