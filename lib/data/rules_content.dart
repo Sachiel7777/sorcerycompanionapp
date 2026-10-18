@@ -13,6 +13,8 @@ class Bilingual {
   String of(bool english) => english ? en : it;
 }
 
+const officialCodexUrl = 'https://sorcerytcg.com/codex';
+const officialChangelogUrl = 'https://sorcerytcg.com/codex/changelog';
 const officialRulebookUrl = 'https://drive.google.com/file/d/1sgQo0xf0N2teIR0zlyl91g9j6LVncZnr/view';
 
 class RulesSection {

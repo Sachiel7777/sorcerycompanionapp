@@ -224,6 +224,10 @@ class AppStrings {
     'A summary written for this app. When in doubt, the official rulebook decides.',
   );
   String get officialRulebook => _t('Regolamento ufficiale (PDF)', 'Official rulebook (PDF)');
+  String get officialCodex => _t('Codex ufficiale', 'Official Codex');
+  String get officialCodexHint => _t('Regole e FAQ sul sito di Sorcery', 'Rules and FAQ on the Sorcery website');
+  String get officialChangelog => _t('Changelog del Codex', 'Codex changelog');
+  String get officialChangelogHint => _t('Ultime modifiche a regole e FAQ', 'Latest rules and FAQ changes');
   String get openLinkFailed =>
       _t('Non riesco ad aprire il link. Eccolo da copiare:', 'Couldn\'t open the link. Here it is to copy:');
   String get searchCodex => _t('Cerca nel glossario', 'Search the glossary');

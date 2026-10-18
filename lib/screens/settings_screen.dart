@@ -9,6 +9,7 @@ import '../data/settings.dart';
 import '../data/text_files.dart';
 import '../l10n/strings.dart';
 import '../theme.dart';
+import '../data/rules_content.dart';
 import 'codex_screen.dart';
 import 'offline_screen.dart';
 import 'rules_screen.dart';
@@ -148,6 +149,20 @@ class SettingsScreen extends StatelessWidget {
                 subtitle: Text(s.codexHint),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => CodexScreen(db: db))),
+              ),
+              ListTile(
+                leading: const Icon(Icons.public),
+                title: Text(s.officialCodex),
+                subtitle: Text(s.officialCodexHint),
+                trailing: const Icon(Icons.open_in_new),
+                onTap: () => openLink(context, officialCodexUrl),
+              ),
+              ListTile(
+                leading: const Icon(Icons.history),
+                title: Text(s.officialChangelog),
+                subtitle: Text(s.officialChangelogHint),
+                trailing: const Icon(Icons.open_in_new),
+                onTap: () => openLink(context, officialChangelogUrl),
               ),
             ]),
             SectionTitle(s.game),
