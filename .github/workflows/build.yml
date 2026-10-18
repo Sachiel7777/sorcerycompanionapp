@@ -41,7 +41,34 @@ jobs:
           keyPassword=$KEYSTORE_PASSWORD
           EOF
       - run: flutter build apk --release
+      - name: Name the APK
+        run: cp build/app/outputs/flutter-apk/app-release.apk sorcery-companion.apk
       - uses: actions/upload-artifact@v4
         with:
           name: sorcery-companion-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: sorcery-companion.apk
+
+  # Publishes the APK as a GitHub Release asset on every push to main.
+  # Kept as a separate job so that only it gets write access to the repo.
+  release:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: android
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: sorcery-companion-apk
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Tag = pubspec version + CI run number, e.g. v1.0.0-build.42
+          version=$(sed -n 's/^version: *\([0-9.]*\).*/\1/p' pubspec.yaml)
+          tag="v${version}-build.${GITHUB_RUN_NUMBER}"
+          gh release create "$tag" sorcery-companion.apk \
+            --target "$GITHUB_SHA" \
+            --title "Sorcery Companion ${version} (build ${GITHUB_RUN_NUMBER})" \
+            --generate-notes --latest
